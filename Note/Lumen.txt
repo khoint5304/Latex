@@ -1,0 +1,618 @@
+================================================================
+       LUMEN & NANITE - TÀI LIỆU TỔNG HỢP CHO DEVELOPER
+         Unreal Engine 5 - Cập nhật: Tháng 4/2026
+================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PHẦN 1: LUMEN - GLOBAL ILLUMINATION & REFLECTIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ TỔNG QUAN
+──────────────────────────────────────────────────────────────
+Lumen là hệ thống Global Illumination (GI) và Reflections hoàn toàn
+động (fully dynamic) của Unreal Engine 5. Nó render diffuse
+interreflection với số lần bounce vô hạn và indirect specular
+reflections trong môi trường lớn, chi tiết, từ milimet đến kilomet.
+
+Mục tiêu chính:
+  - 60 FPS trên console thế hệ mới (PS5, Xbox Series X/S) với High
+    scalability level → 4ms frame budget tại 1080p nội bộ + TSR
+  - 30 FPS với Epic scalability level → 8ms frame budget tại 1080p
+
+Lumen thay thế hoàn toàn:
+  - Screen Space Global Illumination (SSGI)
+  - Distance Field Ambient Occlusion (DFAO)
+  - Screen Space Reflections (SSR)
+  - Ray Tracing Global Illumination (RTGI) cũ của UE4
+
+Khi Lumen được bật: Static Lighting (lightmap) bị vô hiệu hóa.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ KIẾN TRÚC & THUẬT TOÁN CỐT LÕI
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. SURFACE CACHE
+──────────────────────────────────────────────────────────────
+Surface Cache là tham số hóa tự động của bề mặt scene lân cận, dùng
+để tra cứu lighting tại các điểm ray hit một cách nhanh chóng.
+
+Cách hoạt động:
+  - Lumen chụp ảnh material properties của từng mesh từ nhiều góc độ
+  - Các vị trí chụp này gọi là "Cards" - được tạo offline cho mỗi mesh
+  - Mặc định: 12 Cards mỗi mesh. Tăng trong Static Mesh Editor →
+    Build Settings → Max Lumen Mesh Cards (cho mesh phức tạp)
+  - Sau khi populate material properties, Lumen tính direct &
+    indirect lighting cho các vị trí bề mặt này
+  - Các cập nhật được dàn trải (amortized) qua nhiều frame để hỗ trợ
+    nhiều dynamic lights và multi-bounce GI hiệu quả
+
+Visualization:
+  - Console: r.Lumen.Visualize.CardPlacement 1
+  - View Mode → Lumen → Surface Cache (vùng màu hồng = không có coverage)
+  - Vùng màu hồng sẽ không bounce light, xuất hiện đen trong reflection
+
+Giới hạn của Surface Cache:
+  - Mesh phức tạp (cả căn phòng trong 1 mesh) sẽ không hoạt động đúng
+  - Chỉ hỗ trợ mesh với interior đơn giản: tường, sàn, trần phải là
+    các mesh riêng biệt
+  - Material có view-dependent logic (Pixel Depth, Camera Position)
+    có thể hiển thị sai → dùng Ray Tracing Quality Switch node
+
+──────────────────────────────────────────────────────────────
+2. SCREEN TRACING (Screen Space Tracing)
+──────────────────────────────────────────────────────────────
+Lumen LUÔN trace rays qua screen trước (bước đầu tiên), sau đó mới
+dùng phương pháp đáng tin cậy hơn nếu không tìm thấy hit.
+
+Ưu điểm:
+  - Hỗ trợ mọi loại geometry
+  - Bù đắp sự không khớp giữa Lumen Scene và triangle scene thực tế
+
+Nhược điểm:
+  - Giới hạn khả năng art direction cho indirect lighting
+  - Setting Indirect Lighting Scale lớn → GI phụ thuộc vào góc nhìn
+
+Tắt Screen Traces:
+  - Show > Lumen > bỏ check Screen Traces
+  - Hoặc trong Post Process Volume → Lumen Global Illumination /
+    Lumen Reflections category
+
+──────────────────────────────────────────────────────────────
+3. HAI PHƯƠNG PHÁP RAY TRACING
+──────────────────────────────────────────────────────────────
+
+[A] SOFTWARE RAY TRACING (Mặc định)
+  - Sử dụng Signed Distance Fields (SDF)
+  - Chạy trên mọi hardware hỗ trợ Shader Model 6 (SM6)
+  - Yêu cầu bật: Generate Mesh Distance Fields trong Project Settings
+  - Renderer merge Mesh Distance Fields → Global Distance Field để
+    tăng tốc tracing
+
+  Hai chế độ (Software Ray Tracing Mode trong Project Settings):
+    • Detail Tracing (mặc định): trace individual mesh SDF trong 2m
+      đầu (accuracy cao), Global Distance Field cho phần còn lại
+    • Global Tracing: chỉ trace Global Distance Field → nhanh hơn
+
+  Phạm vi Lumen Scene: 200m từ camera (tăng tới 800m qua Post Process
+  → Lumen Scene View Distance)
+
+  Giới hạn:
+    • Chỉ hỗ trợ: Static Meshes, Instanced Static Meshes, HISM, Landscape
+    • Foliage phải bật: Affect Distance Field Lighting
+    • World Position Offset (WPO) KHÔNG được hỗ trợ
+    • Tường phải dày ít nhất 10cm để tránh light leaking
+    • Mesh quá mỏng hoặc one-sided có thể gây artifact
+    • Mesh nhập nhỏ rồi scale up → kém chất lượng SDF (set Distance
+      Field Resolution Scale trong Static Mesh Editor)
+
+[B] HARDWARE RAY TRACING
+  - Trace trực tiếp trên triangles → chất lượng cao hơn
+  - Hỗ trợ skinned meshes (Software không hỗ trợ)
+  - Có thể evaluate lighting tại ray hit (Hit Lighting for Reflections)
+    thay vì dùng Surface Cache chất lượng thấp hơn
+
+  Yêu cầu phần cứng:
+    • Windows 10 + DirectX 12: NVIDIA RTX-2000+ hoặc AMD RX 6000+
+    • PlayStation 5
+    • Xbox Series S/X
+
+  Bật Hardware RT:
+    Project Settings → Engine > Rendering:
+    - Support Hardware Ray Tracing: ON
+    - Use Hardware Ray Tracing when available: ON
+    - Ray Lighting Mode: Hit Lighting for Reflections (tùy chọn)
+
+  Chi phí cao:
+    • Cần rebuild TLAS (Top Level Acceleration Structure) mỗi frame
+    • Chi phí tỷ lệ với số instances → giữ dưới 100,000 instances
+      trong ray tracing scene sau culling (trên console)
+    • Skinned mesh (nhân vật chuyển động) tốn kém để update BVH
+
+  Nanite với Hardware RT:
+    • Dùng Fallback Mesh thay vì toàn bộ Nanite geometry
+    • Screen Traces bù đắp sự không khớp
+    • Tăng Fallback Relative Error nếu có self-intersection artifacts
+
+──────────────────────────────────────────────────────────────
+4. FINAL GATHER & RADIANCE CACHE
+──────────────────────────────────────────────────────────────
+  - Screen Probe Gather: trace rays từ pixels và tích hợp incoming
+    lighting → responsible cho final gather
+  - World Space Radiance Cache: cache distant lighting
+  - Sky lighting được tính trong Final Gather process → có sky
+    shadowing, indoor tối hơn outdoor
+
+──────────────────────────────────────────────────────────────
+5. LARGE WORLDS & FAR FIELD
+──────────────────────────────────────────────────────────────
+  - Lumen hoạt động camera-centric: stream in/out theo vị trí camera
+  - Software RT: phạm vi 200m mặc định, tối đa 800m
+  - Far Field (chỉ Hardware RT): GI và Reflections mở rộng tới 1km
+    từ camera
+    • Bật: r.LumenScene.FarField=1 trong DefaultEngine.ini
+    • Yêu cầu World Partition HLOD1 được build
+    • Far Field bắt đầu từ Max Trace Distance (200m) → 1km
+  - Demo nổi tiếng: "The Matrix Awakens" UE5
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ KÍCH HOẠT LUMEN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Project Settings → Engine > Rendering:
+  - Dynamic Global Illumination: Lumen
+  - Reflection Method: Lumen
+  - Generate Mesh Distance Fields: tự động bật (cần restart engine)
+
+Lưu ý: Project UE4 chuyển đổi sang UE5 KHÔNG tự bật Lumen.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ CÁC TÍNH NĂNG LIGHTING CỦA LUMEN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ✓ Diffuse GI: indirect lighting với infinite bounces, color bleed
+  ✓ Indirect specular / Reflections: đầy đủ roughness range
+  ✓ Sky Lighting & sky shadowing (trong Final Gather)
+  ✓ Emissive Materials: propagate light qua Final Gather (miễn phí)
+  ✓ Reflections: Clear Coat, translucency glossy reflections
+  ✓ Two-Sided Foliage: gather lighting từ backface, attenuate bằng
+    Subsurface Color
+  ✓ Lit Translucency & Volumetric Fog (chất lượng thấp hơn)
+  ✓ Tất cả loại light: Directional, Sky, Point, Spot, Rect Lights
+  ✓ Light Functions trên mọi loại light
+
+  ✗ Không hỗ trợ: Static Lights (lightmaps), Forward Shading, VR
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ PHẦN 2: TỐI ƯU HIỆU NĂNG LUMEN (CHO DEVELOPER)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+──────────────────────────────────────────────────────────────
+A. SCALABILITY SETTINGS
+──────────────────────────────────────────────────────────────
+Level Editor → Viewport Settings → Engine Scalability Settings
+
+  Cinematic  → Movie Render Queue
+  Epic       → 30 fps console (8ms @ 1080p)
+  High       → 60 fps console (4ms @ 1080p)
+  Medium     → DFAO + SSAO thay Lumen GI
+  Low        → chỉ unshadowed skylight, tắt Lumen hoàn toàn
+
+Cấu hình console (ví dụ PS5 targeting 60fps trong PS5DeviceProfiles.ini):
+  [PS5 DeviceProfile]
+  +CVars=sg.GlobalIlluminationQuality=2
+  +CVars=sg.ReflectionQuality=2
+
+──────────────────────────────────────────────────────────────
+B. POST PROCESS VOLUME SETTINGS (điều chỉnh trực tiếp)
+──────────────────────────────────────────────────────────────
+
+  Lumen Scene Lighting Quality   → chất lượng tính toán scene (tăng = đẹp hơn, tốn hơn)
+  Lumen Scene Detail             → kích thước nhỏ nhất của instance được đưa vào Lumen Scene
+  Lumen Scene View Distance      → khoảng cách tối đa Lumen duy trì (mặc định 200m)
+  Final Gather Quality           → chất lượng GI, giảm noise
+  Max Trace Distance             → khoảng cách tối đa tracing (nhỏ = leak trong hang/cave)
+  Final Gather Lighting Update Speed  → tốc độ propagate lighting changes (tăng = nhanh hơn nhưng đắt)
+  Lumen Scene Lighting Update Speed   → tốc độ update Surface Cache
+  Diffuse Color Boost            → tăng indirect lighting nhân tạo (không physically correct)
+  Skylight Leaking               → cho phép một phần sky light rò vào indoor
+  Max Roughness To Trace         → roughness tối đa để trace reflection ray (default 0.4)
+  Max Reflection Bounces         → số lần bounce reflection (default 1, tối đa 64 với r.Lumen.Reflections.MaxBounces)
+
+──────────────────────────────────────────────────────────────
+C. TỐI ƯU HARDWARE RAY TRACING
+──────────────────────────────────────────────────────────────
+
+1. Kiểm soát số instances trong ray tracing scene:
+   Stat SceneRendering → xem "Ray tracing active instances"
+   Mục tiêu: < 100,000 instances sau culling
+
+2. Ray tracing culling (DefaultEngine.ini):
+   [SystemSettings]
+   r.RayTracing.Culling=3
+   r.RayTracing.Culling.Radius=15000
+   r.RayTracing.Culling.Angle=0.5
+
+3. Tắt "Visible In Ray Tracing" cho mesh không quan trọng
+   (skybox, grass, overlapping kit-bashed meshes)
+
+4. Giới hạn BVH traversal iterations trên console:
+   r.Lumen.HardwareRayTracing.MaxIterations
+
+5. Không dùng Hit Lighting for Reflections trong game thông thường
+   (chỉ dùng khi material đơn giản + có Ray Tracing Quality Switch)
+
+6. Chỉ dùng Hardware RT khi KHÔNG có quá nhiều overlapping instances
+   → Software RT phù hợp hơn cho scene đông đặc instances
+
+──────────────────────────────────────────────────────────────
+D. TỐI ƯU SOFTWARE RAY TRACING
+──────────────────────────────────────────────────────────────
+
+1. Dùng Global Tracing thay Detail Tracing nếu scene có quá nhiều
+   overlapping instances (Project Settings → Software Ray Tracing Mode)
+
+2. Tắt "Affect Distance Field Lighting" cho mesh không ảnh hưởng GI
+   → loại khỏi Distance Field scene, giảm update cost
+
+3. Set Distance Field Resolution Scale = 0 để loại hoàn toàn mesh
+   không quan trọng
+
+4. Global Distance Field cache static/movable objects riêng → đảm
+   bảo mobility được set đúng, KHÔNG move static actors lúc runtime
+
+5. Debug: r.GlobalDistanceField.Debug.LogModifiedPrimitives
+   → tìm static actors bị move runtime
+
+──────────────────────────────────────────────────────────────
+E. TỐI ƯU REFLECTION
+──────────────────────────────────────────────────────────────
+
+1. Điều chỉnh roughness threshold:
+   - Post Process → Max Roughness To Trace
+   - r.Lumen.Reflections.MaxRoughnessToTraceClamp (scalability)
+   - r.Lumen.Reflections.MaxRoughnessToTraceForFoliage
+     → set = 0 cho foliage vì reflections khó thấy, tiết kiệm đáng kể
+
+2. Thay Lumen Reflections bằng SSR (tiết kiệm ~1ms trên Xbox Series S):
+   r.Lumen.Reflections.Allow=0
+   Trong XSXDeviceProfiles.ini:
+   [XSX_Lockhart DeviceProfile]
+   +CVars=r.Lumen.Reflections.Allow=0
+
+3. Tái sử dụng rays từ diffuse GI cho reflections:
+   r.Lumen.Reflections.RadianceCache=1
+   (chỉ có lợi khi nhiều pixel có roughness 0.2–0.4)
+
+──────────────────────────────────────────────────────────────
+F. TỐI ƯU SCREEN PROBE GATHER & RADIANCE CACHE
+──────────────────────────────────────────────────────────────
+
+  r.Lumen.ScreenProbeGather.DownsampleFactor          → khoảng cách giữa probes (tăng = blur hơn)
+  r.Lumen.ScreenProbeGather.TracingOctahedronResolution → độ phân giải probe
+  r.Lumen.ScreenProbeGather.IntegrateDownsampleFactor 2 → half-res integration (tăng tốc nhiều, có noise)
+  r.Lumen.ScreenProbeGather.RadianceCache.ProbeResolution → chất lượng Radiance Cache
+  r.Lumen.ScreenProbeGather.RadianceCache.NumProbesToTraceBudget → số probes update/frame
+  r.LumenScene.DirectLighting.UpdateFactor             → tốc độ update direct lighting
+  r.LumenScene.Radiosity.UpdateFactor                  → tốc độ update indirect lighting
+  r.LumenScene.DirectLighting.MaxLightsPerTile         → số lights/tile trong Surface Cache
+
+──────────────────────────────────────────────────────────────
+G. ASYNC COMPUTE
+──────────────────────────────────────────────────────────────
+Lumen dùng Async Compute trên console → overlap với non-Nanite
+geometry pass và direct lighting pass.
+
+Chạy toàn bộ Lumen như async compute (khi direct lighting pass quá lớn):
+  r.LumenScene.Lighting.AsyncCompute=1
+  r.Lumen.DiffuseIndirect.AsyncCompute=1
+  r.Lumen.Reflections.AsyncCompute=1
+
+Profiling: tắt Async Compute khi profiling Lumen riêng:
+  r.Lumen.AsyncCompute 0
+
+──────────────────────────────────────────────────────────────
+H. PROFILING TOOLS
+──────────────────────────────────────────────────────────────
+
+  stat GPU                    → xem timing của từng Lumen pass
+  ProfileGPU                  → breakdown chi tiết hơn
+  r.DistanceFields.LogAtlasStats 1  → thống kê mesh distance field
+  r.Lumen.Visualize.CardPlacement 1 → visualization card placement
+  Show > Lumen > Overview     → xem overview Lumen Scene
+  View Mode → Lumen → Surface Cache → tìm vùng màu hồng (coverage thiếu)
+  View Mode → Performance Overview  → xem pixels nào đang trace reflection rays
+
+Ba pass chính của Lumen trong GPU profiler:
+  1. Lumen Scene Lighting (update Surface Cache lighting)
+  2. Lumen Screen Probe Gather (diffuse GI + rough reflections)
+  3. Lumen Reflections (dedicated reflection rays trên smooth surfaces)
+
+──────────────────────────────────────────────────────────────
+I. CONTENT BEST PRACTICES CHO DEVELOPER
+──────────────────────────────────────────────────────────────
+
+  ✓ Bật Nanite cho mesh poly cao → Lumen scene capture nhanh hơn nhiều
+  ✓ Đảm bảo mesh có LOD tốt nếu không dùng Nanite
+  ✓ Geometry phải modular: tường/sàn/trần là mesh riêng biệt
+  ✓ Tường dày ít nhất 10cm để tránh light leaking
+  ✓ Tránh mesh duy nhất lớn (núi, tòa nhà nhiều tầng) → SDF kém
+  ✓ Mesh nhập nhỏ rồi scale up → set Distance Field Resolution Scale
+    trong Static Mesh Editor
+  ✓ Tăng Max Lumen Mesh Cards cho mesh interior phức tạp
+  ✓ Dùng Ray Tracing Quality Switch node cho material phức tạp
+  ✓ Tắt "Affect Distance Field Lighting" / "Visible In Ray Tracing"
+    cho mesh không ảnh hưởng GI (tiết kiệm cost)
+  ✓ Đặt "Emissive Light Source" cho object emissive nhỏ để Lumen
+    nhận ra chúng
+  ✓ Foliage phải bật "Affect Distance Field Lighting" trong Foliage Tool
+  ✓ Dùng SSD để stream Nanite/Distance Field data hiệu quả
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ PHẦN 3: TROUBLESHOOTING LUMEN THƯỜNG GẶP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Vấn đề                              Nguyên nhân                  Giải pháp
+─────────────────────────────────────────────────────────────────────────────
+Splotchy artifacts trong mirror     GI multi-bounce quality thấp Tăng Lumen Scene Quality (PPV)
+Mesh nhỏ đen trong mirror           Lumen cull object nhỏ        Tăng Lumen Scene Detail (PPV)
+GI/Sky occlusion biến mất > 200m    Ngoài phạm vi Lumen Scene    Tăng Lumen Scene View Distance
+Light leaking trong cave/hang       Ray trace khoảng cách ngắn   Tăng Scene Detail + Max Trace Distance
+Lighting thay đổi quá chậm         Caching quá nhiều             Tăng Final Gather Lighting Update Speed
+Emissive nhỏ không chiếu sáng đều  Bị cull khỏi Lumen Scene     Bật "Emissive Light Source" trên instance
+Vùng màu hồng trong Surface Cache   Surface Cache không cover     Tăng Max Lumen Mesh Cards, chia nhỏ mesh
+Reflection thiếu specular highlight  Đang dùng Surface Cache      Bật Hit Lighting for Reflections (PPV)
+Self-intersection artifact (HWRT)   Fallback Mesh không khớp     Tăng Fallback Relative Error
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PHẦN 4: NANITE - VIRTUALIZED GEOMETRY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ NANITE LÀ GÌ?
+──────────────────────────────────────────────────────────────
+Nanite là hệ thống virtualized geometry của Unreal Engine 5 - một
+cách tiếp cận hoàn toàn mới để lưu trữ và render mesh data ở độ chi
+tiết pixel-scale với số lượng object cực lớn.
+
+Cách hoạt động:
+  1. Lúc import: mesh được phân tích và chia thành hierarchical
+     clusters của triangle groups
+  2. Lúc render: clusters được hoán đổi liên tục ở các LOD khác nhau
+     dựa trên góc nhìn camera, kết nối hoàn hảo với nhau (không crack)
+  3. Data được stream on-demand → chỉ detail thực sự visible cần
+     ở trong VRAM
+  4. Nanite chạy trong rendering pass riêng, BYPASS hoàn toàn draw
+     calls truyền thống
+
+Yêu cầu: SSD để stream data hiệu quả
+
+──────────────────────────────────────────────────────────────
+■ LỢI ÍCH CỦA NANITE
+──────────────────────────────────────────────────────────────
+  ✓ Tăng geometry complexity nhiều bậc (orders of magnitude)
+  ✓ Frame budget không còn bị giới hạn bởi polycount, draw calls,
+    hay mesh memory
+  ✓ Import trực tiếp film-quality source art (ZBrush sculpts,
+    photogrammetry scans)
+  ✓ Dùng high-poly detail thay vì bake vào normal maps
+  ✓ LOD tự động, không cần setup manual per-mesh
+  ✓ Không mất chất lượng tại LOD transitions
+  ✓ Một draw call cho toàn bộ mesh (Skeletal Mesh)
+  ✓ Data format nén cao, streaming chi tiết tự động
+
+──────────────────────────────────────────────────────────────
+■ KHI NÀO NÊN DÙNG NANITE?
+──────────────────────────────────────────────────────────────
+Bật Nanite khi mesh:
+  ✓ Có nhiều triangles, hoặc triangles rất nhỏ trên màn hình
+  ✓ Có nhiều instances trong scene
+  ✓ Là major occluder của geometry khác
+  ✓ Cast shadow dùng Virtual Shadow Maps
+
+Ngoại lệ (không cần Nanite): sky sphere (triangles lớn, không
+occlude gì, chỉ 1 instance). Nhưng dùng Nanite nhầm chỗ tổn hao
+rất ít → đừng lo quá.
+
+──────────────────────────────────────────────────────────────
+■ NANITE FEATURES CHÍNH
+──────────────────────────────────────────────────────────────
+  • Static Mesh:    Fully supported, tích hợp Lumen GI + Virtual Shadow Maps
+  • Skeletal Mesh:  1 draw call, Virtual Shadow Maps, animation LODs
+  • Landscape:      Nanite for landscape terrain (phải xem lỗi bên dưới)
+  • Foliage:        Nanite Foliage với instancing, skinned meshes, voxelization
+  • Splines:        Landscape Splines & Blueprint Splines hỗ trợ Nanite
+  • Displacement:   Static Displacement Mapping (offline tessellator)
+  • Tessellation:   Dynamic programmable displacement tại runtime
+
+──────────────────────────────────────────────────────────────
+■ GIỚI HẠN CỦA NANITE
+──────────────────────────────────────────────────────────────
+  ✗ Blend Mode: chỉ hỗ trợ Opaque và Masked (không phải Translucent)
+  ✗ Forward Rendering: không hỗ trợ
+  ✗ VR Stereo Rendering: không hỗ trợ
+  ✗ MSAA: không hỗ trợ
+  ✗ Lighting Channels: không hỗ trợ
+  ✗ Mesh Decals (Translucent): không hỗ trợ
+  ✗ Ray tracing: dùng Fallback Mesh (có thể dùng r.RayTracing.Nanite.Mode 1)
+  ✗ Morph Targets: không hỗ trợ
+  ✗ World Position Offset: hỗ trợ có giới hạn (phải clamp displacement)
+  ✗ Tối đa 16 triệu instances trong scene
+  ✗ Per-vertex tangents không lưu trữ (derived trong pixel shader)
+
+──────────────────────────────────────────────────────────────
+■ NANITE VÀ LUMEN
+──────────────────────────────────────────────────────────────
+  - Nanite tăng tốc mesh captures trong Surface Cache của Lumen
+  - Mesh poly cao CẦN Nanite để Lumen hoạt động hiệu quả
+  - Foliage và Instanced Static Mesh chỉ được Lumen hỗ trợ khi dùng Nanite
+  - Lumen dùng Nanite LOD và Multi-View rasterization cho scene captures
+  - Hardware RT với Nanite → dùng Fallback Mesh; Screen Traces bù đắp mismatch
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ PHẦN 5: LỖI NANITE TRÊN LANDSCAPE - PHẦN LANDSCAPE KHÔNG LOAD ẢNH
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TRIỆU CHỨNG: Một số phần của Landscape không render được (hiển thị
+màu đen, màu trắng, hoặc thiếu texture) khi Nanite được bật trên Landscape.
+
+──────────────────────────────────────────────────────────────
+NGUYÊN NHÂN THƯỜNG GẶP & CÁCH XỬ LÝ:
+──────────────────────────────────────────────────────────────
+
+[1] UNSUPPORTED MATERIAL TYPE (Phổ biến nhất)
+  Vấn đề: Nanite chỉ hỗ trợ material Opaque và Masked. Nếu Landscape
+  material hoặc layer đang dùng Translucent blend mode → Nanite render
+  thất bại, dùng default material (thường là màu trắng/xám).
+
+  Giải pháp:
+  → Kiểm tra Output Log để xem cảnh báo về unsupported material
+  → Mở tất cả material được assign vào Landscape → đảm bảo Blend Mode
+    là Opaque hoặc Masked
+  → Kiểm tra các Material Layer trong Landscape Material
+  → Nếu không sửa được material → TẮT Nanite trên Landscape component đó
+
+[2] LANDSCAPE COMPONENT THIẾU NANITE BUILD DATA
+  Vấn đề: Một số component chưa được build Nanite data (thường xảy ra
+  sau khi thay đổi Landscape hoặc import terrain mới).
+
+  Giải pháp:
+  → Build/Rebuild Landscape: chọn Landscape → Tools → Build Nanite
+    (hoặc menu Build → Build All Levels)
+  → Chờ cook/build hoàn tất
+  → Nếu vẫn lỗi: xóa Derived Data Cache (DDC) trong:
+    %AppData%\Unreal Engine\DerivedDataCache
+    rồi rebuild lại
+
+[3] NANITE LANDSCAPE + WORLD PARTITION STREAMING
+  Vấn đề: Với World Partition, các Landscape Actor trong streaming
+  cells có thể chưa được load hoặc Nanite data chưa stream kịp.
+
+  Giải pháp:
+  → Bật "Always Loaded" cho Landscape actors hoặc các streaming cells
+    chứa Landscape quan trọng
+  → Tăng streaming budget
+  → Kiểm tra trong World Partition Editor rằng Landscape cells được
+    mark đúng
+
+[4] LANDSCAPE HOLE MATERIAL CONFLICT
+  Vấn đề: Landscape Hole Material (dùng cho hang/hầm) conflict với
+  Nanite rendering → một phần terrain biến mất.
+
+  Giải pháp:
+  → Kiểm tra Landscape Details → Hole Material
+  → Đảm bảo Hole Material tương thích với Nanite (Opaque/Masked)
+  → Hoặc tắt Nanite cho Landscape component dùng Hole Material
+
+[5] NANITE LANDSCAPE KHÔNG HỖ TRỢ MỘT SỐ MATERIAL FEATURES
+  Vấn đề: Material dùng các node không tương thích với Nanite
+  (Custom Expression, ParallaxOcclusionMapping, view-dependent nodes)
+
+  Giải pháp:
+  → Dùng Ray Tracing Quality Switch node để cung cấp version đơn
+    giản hơn cho Nanite/Lumen Surface Cache capture
+  → Tránh dùng Parallax Occlusion Mapping trực tiếp trên Landscape
+    với Nanite; dùng Nanite Tessellation thay thế nếu cần depth
+
+[6] DRIVER / PLATFORM COMPATIBILITY
+  Vấn đề: Nanite Landscape yêu cầu DirectX 12 + SM6. GPU/driver cũ
+  có thể fail silently.
+
+  Giải pháp:
+  → Cập nhật GPU driver
+  → Đảm bảo project chạy với DX12 (không phải DX11)
+  → Kiểm tra: Project Settings → Engine > Rendering → Default RHI
+
+──────────────────────────────────────────────────────────────
+QUY TRÌNH DEBUG NHANH CHO LANDSCAPE NANITE BUG:
+──────────────────────────────────────────────────────────────
+
+Bước 1: Mở Output Log → lọc theo "Nanite" và "Warning"/"Error"
+        → tìm "Unsupported material" hoặc "Nanite fallback"
+
+Bước 2: Tắt Nanite tạm thời trên Landscape component bị lỗi
+        (Details panel → Nanite → Disable)
+        → Nếu hết lỗi: vấn đề trong Nanite build hoặc material
+
+Bước 3: Bật View Mode → Nanite Visualization → Overview
+        → xem phần nào không render qua Nanite pipeline
+
+Bước 4: Kiểm tra tất cả material trên Landscape → Blend Mode phải
+        là Opaque hoặc Masked
+
+Bước 5: Nếu dùng World Partition: kiểm tra streaming cells load đúng
+
+Bước 6: Build lại Landscape (Build menu → Build All)
+
+Bước 7 (cuối cùng): Nếu không giải quyết được → TẮT NANITE cho
+        Landscape, dùng traditional rendering (chất lượng vẫn rất
+        tốt, chỉ không có Nanite benefits)
+        → Landscape Details → check "Enable Nanite" → bỏ check
+
+──────────────────────────────────────────────────────────────
+LƯU Ý QUAN TRỌNG VỀ NANITE + LANDSCAPE:
+──────────────────────────────────────────────────────────────
+  - Nanite cho Landscape là tính năng tương đối mới, vẫn còn một số
+    hạn chế và có thể có bugs tùy phiên bản UE5
+  - Lợi ích lớn nhất: kết hợp với Virtual Shadow Maps (giảm shadow
+    rendering cost rất nhiều)
+  - Nếu game không yêu cầu Virtual Shadow Maps trên Landscape → có
+    thể không cần bật Nanite cho Landscape
+  - Luôn test kỹ trên target platform sau khi bật/tắt Nanite landscape
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+■ CONSOLE VARIABLES THAM KHẢO NHANH
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+LUMEN GI:
+  r.Lumen.AsyncCompute 0/1
+  r.Lumen.DiffuseIndirect.AsyncCompute 0/1
+  r.LumenScene.FarField 0/1
+  r.LumenScene.FarField.MaxTraceDistance (default 1km)
+  r.LumenScene.DirectLighting.UpdateFactor
+  r.LumenScene.Radiosity.UpdateFactor
+  r.LumenScene.DirectLighting.MaxLightsPerTile
+  r.GlobalDistanceField.Debug.LogModifiedPrimitives
+  r.DistanceFields.LogAtlasStats 1
+  r.DistanceFields.SupportEvenIfHardwareRayTracingSupported 0/1
+  r.Lumen.Visualize.CardPlacement 0/1
+
+LUMEN REFLECTIONS:
+  r.Lumen.Reflections.Allow 0/1
+  r.Lumen.Reflections.MaxBounces (overrides PPV, tới 64)
+  r.Lumen.Reflections.MaxRoughnessToTraceClamp
+  r.Lumen.Reflections.MaxRoughnessToTraceForFoliage
+  r.Lumen.Reflections.RadianceCache 0/1
+  r.Lumen.Reflections.AsyncCompute 0/1
+
+LUMEN SCREEN PROBE:
+  r.Lumen.ScreenProbeGather.DownsampleFactor
+  r.Lumen.ScreenProbeGather.TracingOctahedronResolution
+  r.Lumen.ScreenProbeGather.IntegrateDownsampleFactor 2
+  r.Lumen.ScreenProbeGather.RadianceCache.ProbeResolution
+  r.Lumen.ScreenProbeGather.RadianceCache.NumProbesToTraceBudget
+  r.Lumen.ScreenProbeGather.RadianceCache.GridResolution
+  r.Lumen.TranslucencyVolume.RadianceCache.NumProbesToTraceBudget
+  r.Lumen.TranslucencyVolume.GridPixelSize
+  r.Lumen.HardwareRayTracing.MaxIterations
+
+RAY TRACING CULLING:
+  r.RayTracing.Culling 0/1/2/3
+  r.RayTracing.Culling.Radius
+  r.RayTracing.Culling.Angle
+
+NANITE:
+  r.RayTracing.Nanite.Mode 1         (experimental native RT Nanite)
+  r.Lumen.ScreenProbeGather.RadianceCache.ProbeResolution
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Nguồn: Epic Games Official Documentation (dev.epicgames.com)
+  - Lumen Global Illumination and Reflections
+  - Lumen Technical Details
+  - Lumen Performance Guide
+  - Nanite Virtualized Geometry Overview
+================================================================

@@ -1,0 +1,157 @@
+\documentclass[../DoAn.tex]{subfiles}
+\begin{document}
+
+\section{Tổng quan trò chơi}
+Mục này dùng để viết những thông tin giới thiệu tổng quan nhất về trò chơi, giúp người đọc có thể nhanh chóng hình dung ra trò chơi. Dưới đây là gợi ý một số thông tin có thể trình bày trong mục này. 
+\begin{itemize}
+    \item \textbf{Tên trò chơi} – This is more important than you think even in a non-commercial environment. It sets the tone for the game’s use and gives it an identity.
+    \item \textbf{Bản sắc của trò chơi} - Game Identity/Mantra: List your single sentence description of the game that you will use to guide design decisions. (Example: Stylized action platformer about a meatball fighting the dinner table.)
+    \item \textbf{Trụ cột trò chơi} - Game Pillars: List up to 3 words/phrases that convey the feeling or emotion you want the player to experience. (Example: Fast. Action-packed. Mayhem.)
+    \item \textbf{Khẩu hiệu} – tag line: is a statement or phrase that brands your game. Famous tag lines are “Just do it! “Got milk?” “The King of Beers” Or from the video game world: Dark Souls: “Prepare to Die”, Dead Space: “Only the Dead Survive”, Deus Ex “Trust no one. Question Everything”, Pokémon: “Gotta catch em all!”
+    \item \textbf{Phong cách đồ họa} - Once you've explained how to play your game, it’s important to show what your game will look like and what kind of art is behind it, since that will influence how the elements of your game’s universe will coexist, affecting the emotions of the players. This is a crucial point in the game's marketing because it shows the appearance of the game and the feelings it will pass to the player.
+    \item ...
+\end{itemize}
+
+\section{Lối chơi}
+Phần này sẽ cho người chơi biết những gì mong đợi. Không nên đi quá sâu vào chi tiết. Tùy từng trường hợp các bạn có thể thêm các thông tin bổ sung, hoặc bỏ một số nội dung không áp dụng trong trò chơi của bạn. Nên viết thành đoạn văn, tránh gạch đầu dòng.
+\begin{itemize}
+    \item     \textbf{Ấn tượng ban đầu} - (First minutes) This is a subsection of the Gameplay section, and it exposes what the player will see in the game when it has just finished loading. It exposes the actions and reactions between the game and the players during this interval, helping readers understand the game’s progress throughout the gameplay and giving a better idea of how to play it. It’s also an important subsection, since it will determine whether or not the game is fun.
+    \item \textbf{Mục tiêu} – What are the objectives of the game? Is it to reach a destination, retrieve the chalice, accrue the most money, or solve a puzzle in the fastest amount of time?
+    \item \textbf{Diễn tiến và luồng trò chơi} – (Progression and game flow) How does the game flow for the game player? Is there an overall scoring and objective for the game or is it a progression of levels?  This is a more detailed subsection of the Gameplay than the First Minutes. It describes all the options that players can choose while they're playing. It’s a kind of flowchart that shows which reaction each option has, giving a picture of the game as a whole. Generally it shows a flow of screens (e.g. from the “Main menu” screen it goes to the “Select level” screen), but you can also put actions and consequences in it (e.g. if the player chooses the “Mage” character, all the backgrounds will have a “magical” feeling). It literally explains the way that the game flows, as the name suggests.
+    \item \textbf{Nhiệm vụ, thử thách hoặc cấu trúc puzzle}
+\end{itemize}
+
+(Hướng dẫn viết và ví dụ)
+First minute example
+It's interesting for you to describe what the player's reaction is going to be like as soon as the game loads, such as describing whether they can start playing right away or if they can navigate through menus to change some options beforehand, whether the player will have to learn the controls by trial and error or a tutorial will be presented, whether all stages will be available at the get-go or if they will have to unlock them in progression, and so on. Given you have already planned some stages ahead, you could narrate a short run of the player clearing a stage, describing the enemies and/or puzzles they had to go through in said stage.
+Right:
+\textit{After the title screen the player is presented with a list of games they can join and an option to create a new one. After selecting the option to create a new game, a list of predefined levels appears on the right of the screen. (...) After the settings are adjusted, three other players join, and the game begins. A timer counts down from five while the players get ready, using the small amount of money they start with to place a few blocks. As a simple beat plays in the background, the board rotates around the middle of the screen, revealing the layout of the level. (...) The player’s goals are on each corner of the board. (...) As soon as the countdown reaches zero, ‘Go!’ is displayed in the middle of the screen and the orbs start falling from the cloud, creating havoc in their path. (...) The player quickly places a stone corner block on the edge of the level and the orb bounces off it, only to end up in the player’s goal followed by a familiar cashier sound. The player’s score and cash are updated to 200, and they start going through the blocks they can now place (...).}
+Wrong:
+\textit{The game begins with the players facing each other in opposite corners. Player 1 decides to use all his money from the get-go and wins the game by using well-placed stone blocks to earn points.}
+
+Gameflow Example
+A nice complement to the “First minute” would be the “Game Flow” or a game design flowchart, which is usually represented as a flowchart or game flow summary. In contrast to the previous subsection, this one won't focus on the first impression but rather give an overview of the whole picture, showing step-by-step which actions the player can take from the moment the game is loaded to when the player hits the “exit button”, i.e. ends the gaming session—including the gameplay itself in a somewhat high concept. Remember to be as specific as possible when creating your game design flowchart.
+
+Right:
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.6]{Hinhve/GameFlowR.png}
+    \caption{Good Gameflow Chart}
+    \label{fig:my_label}
+\end{figure}
+(Example from Drexel Game Design's Scavenger Hunt GDD.)
+Creating a very simple game design flowchart like the one below will not help the creation of the game. 
+
+Wrong:
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.6]{Hinhve/GameFlowW.png}
+    \caption{Bad Gameflow Chart}
+    \label{fig:my_label}
+\end{figure}
+(Nothing THIS simple. Include, at least, all the screens that the player will run through!)
+
+\section{Cơ chế của trò chơi}
+\textbf{\textit{Đây là mục quan trọng nhất. Nên chia nhỏ ra thành các subsection và trình bày chi tiết.}}
+Những chủ đề này chỉ nói đến nếu có liên quan đến trò chơi của bạn. Mỗi trò chơi đều khác nhau và không phải nội dung nào cũng đều áp dụng được. Nên coi đây là checklist để giúp bạn nắm bắt mọi thứ quan trọng. 
+
+\subsection{Luật}
+Rules: include both implicit and explicit rules. 
+
+\subsection{Mô hình thế giới}
+Think of it as a simulation of a world, how do all the pieces interact? If it is a puzzle game, there may be no universe to discuss, but there is the layout and the structure of the puzzle. Included in the universe are 
+
+\textbf{Physics}
+How does the physical universe work? If there are no physics, do not try to create them.
+
+\textbf{Economy}
+What is the economy of the game? How does it work? The economy incudes the items that the player is trying to collect as well as a world economy. How does a player earn or lose these items?
+
+\subsection{Các hành động của nhân vật}
+These include  
+    \begin{itemize}
+        \item Character movement -- How does the character move? 
+        \item Objects – how to pick them up and move them. Are there key objects of importance that should be identified here? Is there an inventory that the player maintains or are all interactions transitory? 
+        \item Actions – What else can the player (or character) do? Include any in-game switches and buttons that are used, interacting with objects, and what means of communication are used 
+        \item Combat – If there is combat or even conflict, how is this specifically modeled? What are the differences in weapons?
+    \end{itemize}
+
+\subsection{Luồng màn hình}
+How each screen is related to every other and a description of the purpose of each screen
+\subsection{Các tùy chọn trò chơi}
+What are the options and how do they affect game play?  - Replaying and saving - Cheats and Easter Eggs if there are any
+
+\subsection{Phản hồi cho người chơi}
+How can the player tell if they are doing well? Is there mechanisms to tell them what they are doing wrong?
+
+\section{Điều khiển}
+Stating which buttons/keys do what can be troublesome in the case where a single button performs more than one action (e.g. the ‘A’ button in any 3D Zelda). Start by including a simple picture of a controller or a keyboard with each button highlighted with their function in a more general sense. After that, if your game has advanced combos or something similar to that, explain them carefully, stating under which conditions each combo is “activated”.
+
+Example:
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.6]{Hinhve/Control.png}
+    \caption{Image from CrunchTime Games Inc's Shred Nebula document}
+    \label{fig:my_label}
+\end{figure}
+
+\section{Cốt truyện}
+\textit{(optional)}
+If you have a puzzle game, there is probably no backstory or story. As soon as you add an avatar of any sort, you have a story. It may be as simple as who the character is. 
+\begin{itemize}
+    \item \textbf{Backstory. }If there is no plot or narrative in the story but you need to understand the background, that is a backstory. The backstory can also be setting the stage for the story that is going to unfold.
+    \item \textbf{Plot elements. }There are multiple patterns of a plot: the 3-act play, the hero’s journey, episodic, … Use one of the models to describe the story of the game.
+    \item \textbf{Game story progression. }Explain how the progression of the plot is exposed to the player. Remember that there are different approaches to the narrative: how it is exposed, who is telling it and the sequence that things happen. If you are using cut scenes to progress the story, describe the cut scenes in detail.
+\end{itemize}
+
+\section{Thế giới game}
+\textit{(optional)}
+Describe the general \textbf{look and feel} of world. Of particular importance is whether the world is broken up into different areas that are relevant to the game. If it is, describe how they are connected, how the player moves between them, and how they relate to levels.
+
+\section{Nhân vật và kẻ địch}
+Player avatar. Indicate if the user has the ability to define their own avatar and what options they are able to define.
+List of characters in the game: identify which are playable and which are not. If there are characters that are relevant to the game but never seen, be sure to include them. Include enemies and opponents. If the enemies are classes only, that is fine. Identify the class and if there is a specific number of them, etc.
+For each character, give their backstory, personality, appearance and abilities. Explain the relevance of each player to the story and their relationship to other characters. If certain of the characters only appear in certain levels or areas, explain that as well. This is also the place to describe any AI that is used for these characters.
+
+
+\section{Màn chơi}
+General description of how levels are used. If they are very similar, the detailed level descriptions need not be very long.
+For each level, describe what additional skills or information they are learning? For each level, give a synopsis of the level and the objectives of that level. If there is introductory material that is required, how is it provided? There are two key aspects to cover in each level: the game play changes and the content changes. In some cases, both change; in other cases, only one does. For example, as levels progress, you may give the player less hints so that they learn the content better and you may increase the frequency of enemies.
+For each level, describe how the map changes and whether it is a crafted or procedurally generated map. If it is procedurally generated, what are the constraints or requirements that put on it?
+Is there a training level or a playable tutorial? How is the player’s progress assessed at the end of the level? Are they allowed to replay levels? Does progression through the levels require a specific level of accomplishment (that is are subsequent levels being unlocked)?
+
+Now let’s pretend we have a typical 2D platformer. One of the core elements of the game is the stages the player has to go through. It’s important that each stage feels unique so the player won’t feel as if they're just repeating the same thing over and over again. On the other hand, the player should still be familiar with the flow of the stage, e.g. if there’s always a checkpoint somewhere halfway through it, or some collectible items along the way.
+
+What are the different types of enemies, terrains, doodads, and power-ups, and do they allow the level designers to come up with many different stages? You could present some beta stage diagrams to illustrate how will they be carried out.
+
+Example:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.6]{Hinhve/Level.png}
+    \caption{Example level design}
+    \label{fig:my_label}
+\end{figure}
+
+\section{UI}
+What is the visual system? Specifically, If there is a HUD, what is on it, how is it displayed and how is it accessed? What menus are included and how are they navigated? What is the camera model?
+
+Control System – How does the game player control the game? What are the specific commands?
+Audio, music, sound effects 
+Game Art – intended style 
+Help System
+Settings – what can the user change?
+Feedback for the Player – How can the player tell if they are doing well? Is there mechanisms to tell them what they are doing wrong?
+
+The head-up-display (HUD) is the in-game interface the player will have when playing the game. Rather than in-game menus like settings or inventory screens, this refers specifically to the floating windows and bars which don’t normally interact with the game and serve an information-only purpose. This includes health bars, mini-maps, time counters, equipped items and their amounts, money, etc. Although the size of the HUD will vary according to the game type (MMORPGs and RTSs will have big HUDs, while side-scrollers and puzzles will have very small ones), keep in mind that an HUD shouldn’t occupy too much of the screen.
+
+Example:
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.6]{Hinhve/HUD.png}
+    \caption{HUD example}
+    \label{fig:my_label}
+\end{figure}
+
+
+\end{document}

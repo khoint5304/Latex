@@ -1,0 +1,633 @@
+==============================================================================
+HƯỚNG DẪN TẠO 3 TÍNH CÁCH GUARD - UNREAL ENGINE 5
+==============================================================================
+Tên file BT:
+  - BT_GUARD1  : Tính cách 1 – Điều tra tích cực (Investigator)
+  - BB_Shooter  : Tính cách 2 – Giữ nguyên BT gốc (Position Holder) ← không đổi
+  - BT_GUARD2  : Tính cách 3 – Chiến thuật / Tìm cover (Tactical)
+
+==============================================================================
+PHẦN 0 – PHÂN TÍCH BT GỐC (BB_Shooter)
+==============================================================================
+Cấu trúc BT gốc hiện tại:
+ROOT
+└── Selector
+    ├── [Dec: Taking Damage, aborts both] → Cooldown 3s → Sequence
+    │   ├── Move To (BP_FindRandomLocation, radius 500)
+    │   └── BP_ClearBlackboardValues
+    │
+    ├── [Dec: Is Armed, aborts self] → Selector
+    │   ├── [Engage Enemy] Selector
+    │   │   ├── Has Ammo + Enemy + BP_IsAlive → Simple Parallel
+    │   │   │   ├── Hold Aiming (target: Enemy)
+    │   │   │   └── Sequence: BP_CheckTargetOnSight → Wait 0.2±0.2s → Shoot → Wait 1±0.5s
+    │   │   ├── [Reload Weapon] No Ammo (inversed) → BP_Shooter_Task_ReloadWeapon
+    │   │   ├── [Check noise location]
+    │   │   │   [Dec: Noise Location is Set, aborts both] → Sequence
+    │   │   │   ├── BP_LookAt (target: Noise Location)
+    │   │   │   ├── Wait 2.0s
+    │   │   │   └── BP_ClearBlackboardValues
+    │   │   └── [Overwatch] Sequence
+    │   │       ├── BP_Shooter_Task_Overwatch
+    │   │       └── Wait 1.0s
+    └── [Dec: Is Unarmed, inversed] → BP_Shooter_Task_EquipWeapon (Firearm)
+
+==============================================================================
+PHẦN 1 – CHUẨN BỊ CHUNG: BLACKBOARD VÀ GAMEMODE
+==============================================================================
+
+─────────────────────────────────────────────────────────────────────────────
+1.1  Thêm key vào BB_Shooter (Blackboard gốc)
+─────────────────────────────────────────────────────────────────────────────
+Mở BB_Shooter → Add Key:
+
+  Key Name              | Type    | Ghi chú
+  ──────────────────────┼─────────┼───────────────────────────────────────
+  InvestigateLocation   | Vector  | Vị trí cần điều tra (noise/last-seen)
+  CoverLocation         | Vector  | Vị trí cover gần nhất (chỉ dùng BT_GUARD2)
+  bIsInvestigating      | Bool    | TRUE khi guard đang trên đường điều tra
+  LastKnownEnemyLocation| Vector  | Vị trí cuối cùng nhìn thấy địch
+
+Lưu ý: BT_GUARD1 và BT_GUARD2 đều dùng lại BB_Shooter (hoặc tạo BB_Guard1 /
+BB_Guard2 kế thừa BB_Shooter tùy sở thích). Khuyến nghị kế thừa để tránh
+trùng lặp.
+
+─────────────────────────────────────────────────────────────────────────────
+1.2  Sửa GameMode – Thêm hệ thống đếm Investigator
+─────────────────────────────────────────────────────────────────────────────
+Mở file GameMode Blueprint (hoặc tạo mới nếu chưa có custom GameMode):
+
+  Thêm biến:
+    InvestigatorCount : Integer (default = 0, không expose)
+
+  Thêm 3 hàm:
+
+  ┌─ RegisterInvestigator() ────────────────────────────────────────────────
+  │  InvestigatorCount = InvestigatorCount + 1
+  └─────────────────────────────────────────────────────────────────────────
+
+  ┌─ UnregisterInvestigator() ──────────────────────────────────────────────
+  │  InvestigatorCount = Max(0, InvestigatorCount - 1)
+  └─────────────────────────────────────────────────────────────────────────
+
+  ┌─ IsInvestigationActive() → Boolean ────────────────────────────────────
+  │  Return: InvestigatorCount > 0
+  └─────────────────────────────────────────────────────────────────────────
+
+Lý do chọn cách này: Nhẹ nhàng, không cần tick, không cần event dispatcher
+phức tạp. Mỗi BT Task/Decorator gọi GetGameMode → Cast → gọi hàm. Chi phí
+cast chỉ xảy ra khi guard chuyển trạng thái (rất ít lần/giây).
+
+==============================================================================
+PHẦN 2 – TÍNH CÁCH 1: BT_GUARD1 (Investigator – Điều tra tích cực)
+==============================================================================
+Hành vi:
+  • Khi nghe tiếng động hoặc thấy địch → ghi vị trí vào InvestigateLocation
+  • Di chuyển đến InvestigateLocation
+  • Chờ 5 giây tại chỗ (quét xung quanh)
+  • Không phát hiện thêm gì → quay lại tuần tra ngẫu nhiên bình thường
+  • Đăng ký/hủy đăng ký với GameMode khi vào/ra trạng thái điều tra
+
+─────────────────────────────────────────────────────────────────────────────
+2.1  Assets cần tạo mới cho BT_GUARD1
+─────────────────────────────────────────────────────────────────────────────
+
+════ BTTask_SetInvestigating ════════════════════════════════════════════════
+Đường dẫn gợi ý: Content/AI/Tasks/BTTask_SetInvestigating
+Loại: Blueprint class kế thừa BTTaskNode
+
+  Biến input:
+    bRegister : Boolean  (Exposed on spawn)
+
+  Override ReceiveExecute(OwnerController, ControlledPawn):
+    1. Get Game Mode → Cast to [Tên GameMode của bạn]
+    2. Branch: bRegister == true?
+       TRUE  → Call RegisterInvestigator()
+              → Set Blackboard Value as Bool (key: bIsInvestigating, value: true)
+       FALSE → Call UnregisterInvestigator()
+              → Set Blackboard Value as Bool (key: bIsInvestigating, value: false)
+    3. Finish Execute (Success = true)
+
+════ BTTask_SetInvestigateFromNoise ═════════════════════════════════════════
+Đường dẫn gợi ý: Content/AI/Tasks/BTTask_SetInvestigateFromNoise
+
+  Override ReceiveExecute(OwnerController, ControlledPawn):
+    1. Get Blackboard → Get Value as Vector (key: Noise Location)
+    2. Get Blackboard → Set Value as Vector (key: InvestigateLocation, value: ↑)
+    3. Finish Execute (Success = true)
+
+  (Task nhỏ này chuyển NoiseLocation → InvestigateLocation để dùng chung)
+
+════ BTService_UpdateLastKnownLocation ══════════════════════════════════════
+Đường dẫn gợi ý: Content/AI/Services/BTService_UpdateLastKnownLocation
+Loại: Blueprint class kế thừa BTService
+Interval: 0.2s, Random Deviation: 0.05s
+
+  Override ReceiveTick(OwnerController, ControlledPawn, DeltaSeconds):
+    1. Cast OwnerController → AIController
+    2. Get Perception Component → GetCurrentlyPerceivedActors(Sight)
+    3. Branch: Array length > 0?
+       TRUE  → For Each Loop → check Actor is Player (Cast to Character/BP_Player)
+              → If valid: GetActorLocation → Set BB Vector (LastKnownEnemyLocation)
+              →           Set BB Vector (InvestigateLocation) ← cũng update luôn
+
+Đặt Service này trên node "Engage Enemy" Selector trong BT_GUARD1.
+
+─────────────────────────────────────────────────────────────────────────────
+2.2  Cấu trúc BT_GUARD1
+─────────────────────────────────────────────────────────────────────────────
+Tạo file mới: Content/AI/BT_GUARD1
+Blackboard: BB_Shooter (hoặc BB_Guard1 kế thừa BB_Shooter)
+
+ROOT
+└── Selector
+    │
+    ├── [Dec: Taking Damage, aborts both] → Cooldown 3s → Sequence
+    │   ├── Move To (BP_FindRandomLocation, radius 500)
+    │   └── BP_ClearBlackboardValues
+    │
+    ├── [Dec: Is Armed, aborts self] → Selector
+    │   │   [Service: BTService_UpdateLastKnownLocation]  ← ĐẶT Ở ĐÂY
+    │   │
+    │   ├── ──── ENGAGE ENEMY (giữ nguyên như BT gốc) ────────────────────
+    │   │   [Dec: Has Ammo, aborts self]
+    │   │   [Dec: Enemy is Set, aborts both]
+    │   │   [Dec: BP_IsAlive, aborts self] → Simple Parallel
+    │   │       Main:  Hold Aiming (Target: Enemy)
+    │   │       Sub:   Sequence
+    │   │               ├── BP_CheckTargetOnSight (Target: Enemy)
+    │   │               ├── Wait 0.2±0.2s
+    │   │               ├── Shoot (Number Of Shots: 8)
+    │   │               └── Wait 1.0±0.5s
+    │   │
+    │   ├── ──── RELOAD WEAPON (giữ nguyên) ─────────────────────────────
+    │   │   [Dec: No Ammo inversed] → BP_Shooter_Task_ReloadWeapon
+    │   │
+    │   ├── ──── INVESTIGATE (THAY THẾ "Check noise location" gốc) ──────
+    │   │   [Dec: InvestigateLocation is Set, aborts both] → Sequence "Investigate"
+    │   │   │
+    │   │   ├── BTTask_SetInvestigating (bRegister = TRUE)
+    │   │   │     ↑ đăng ký với GameMode, set bIsInvestigating = true
+    │   │   ├── Move To (Blackboard key: InvestigateLocation, Acceptable Radius: 100)
+    │   │   ├── Wait 5.0s
+    │   │   │     ↑ đứng chờ 5 giây tại vị trí điều tra
+    │   │   ├── BTTask_SetInvestigating (bRegister = FALSE)
+    │   │   │     ↑ hủy đăng ký, set bIsInvestigating = false
+    │   │   └── BP_ClearBlackboardValues
+    │   │         ↑ xóa InvestigateLocation, Noise Location
+    │   │
+    │   ├── ──── NOISE DETECT → SET INVESTIGATE LOCATION ────────────────
+    │   │   [Dec: Noise Location is Set, aborts both] → Sequence "Copy Noise"
+    │   │   ├── BTTask_SetInvestigateFromNoise
+    │   │   │     ↑ copy NoiseLocation → InvestigateLocation
+    │   │   └── BP_ClearBlackboardValues (chỉ clear Noise Location)
+    │   │         (InvestigateLocation vừa được set sẽ kích hoạt branch Investigate)
+    │   │
+    │   └── ──── OVERWATCH (giữ nguyên) ──────────────────────────────────
+    │       Sequence
+    │       ├── BP_Shooter_Task_Overwatch
+    │       └── Wait 1.0s
+    │
+    └── [Dec: Is Unarmed, inversed] → BP_Shooter_Task_EquipWeapon (Firearm)
+
+Lưu ý thứ tự nhánh trong "Is Armed" Selector (từ trái sang phải/trên xuống):
+  1. Engage Enemy  (ưu tiên cao nhất khi có địch)
+  2. Reload Weapon
+  3. Investigate   (khi có InvestigateLocation)
+  4. Copy Noise    (khi có Noise → convert thành InvestigateLocation)
+  5. Overwatch     (idle mặc định)
+
+─────────────────────────────────────────────────────────────────────────────
+2.3  Kết nối AI Perception với Noise Location (nếu chưa làm)
+─────────────────────────────────────────────────────────────────────────────
+  Trong AIController của Guard1:
+    AI Perception Component → Hearing Config:
+      Detection By Affiliation: Enemies ✓, Neutrals ✓
+    Sự kiện "OnTargetPerceptionUpdated":
+      Khi Stimulus.bSuccessfullySensed == true AND Stimulus.Type == Hearing:
+        Set Blackboard Value as Vector (Noise Location = Stimulus.StimulusLocation)
+
+==============================================================================
+PHẦN 3 – TÍNH CÁCH 2: BB_Shooter (Position Holder – Giữ nguyên)
+==============================================================================
+KHÔNG cần thay đổi gì. Đây là BT gốc đã có sẵn.
+
+Tóm tắt hành vi của tính cách này:
+  • Nghe tiếng động → Quay nhìn về hướng âm thanh (BP_LookAt)
+  • Đứng yên chờ 2 giây
+  • Không di chuyển để điều tra
+  • Xóa Noise Location → quay về trạng thái tuần tra ngẫu nhiên / overwatch
+  ✓ Phù hợp kiểu "canh giữ đồ" hoặc "chốt vị trí"
+
+==============================================================================
+PHẦN 4 – TÍNH CÁCH 3: BT_GUARD2 (Tactical – Tìm cover)
+==============================================================================
+Hành vi:
+  • Nghe tiếng động hoặc thấy địch → Tìm điểm cover gần nhất → Di chuyển đến cover → Cúi (crouch) → Nhìn về phía nguy hiểm
+  • Chờ cho đến khi:
+    - Có Guard1 đang điều tra VÀ Guard1 hoàn thành điều tra → thoát cover
+    - Không có Guard1 nào điều tra → chờ 15 giây rồi thoát
+  • Đứng dậy → xóa trạng thái → quay về tuần tra
+
+─────────────────────────────────────────────────────────────────────────────
+4.1  Chuẩn bị: EQS (Environment Query System) – Tìm cover tự động
+─────────────────────────────────────────────────────────────────────────────
+EQS tự quét môi trường tại runtime, không cần đặt bất cứ actor hay tag nào
+vào map. Hoạt động tốt với mọi map có geometry khác nhau.
+
+Cần tạo 2 asset:
+  A. EQC_ThreatLocation   — Context: cho EQS biết vị trí mối đe dọa
+  B. EQS_FindCover        — Query: tìm điểm đứng ẩn nấp tốt nhất
+
+════ A. Tạo EQC_ThreatLocation (EQS Context) ════════════════════════════════
+Đường dẫn: Content/AI/EQS/EQC_ThreatLocation
+Loại: Blueprint Class → tìm cha là "EnvQueryContext_BlueprintBase"
+
+  Override hàm "Provide Single Location":
+    1. Cast Querier to AIController
+       (pin "Querier" là Object đầu vào của hàm)
+    2. Get Blackboard (Target = AIController)
+    3. Get Blackboard Value as Vector
+         Key = InvestigateLocation  (chọn từ dropdown)
+    4. Nối Return Value → pin "Resulting Location" của hàm
+    5. Compile & Save
+
+  Lưu ý: Hàm "Provide Single Location" là hàm override,
+  tìm trong tab "Override" ở My Blueprint panel.
+
+════ B. Tạo EQS_FindCover (Environment Query) ═══════════════════════════════
+Đường dẫn: Content/AI/EQS/EQS_FindCover
+Loại: chuột phải Content Browser → Artificial Intelligence
+      → Environment Query → đặt tên EQS_FindCover
+
+  ── B1. Thêm Generator ──────────────────────────────────────────────────
+  Chuột phải canvas EQS → "Points: Donut"  (hoặc "Points: Circle")
+  Khuyến nghị dùng Donut để loại bỏ điểm quá gần AI:
+
+  Generator "Points: Donut" → Details:
+    Inner Radius        = 100    ← không chạy vào sát tường
+    Outer Radius        = 600    ← bán kính tìm kiếm tối đa
+    Number of Rings     = 2
+    Points Per Ring     = 12
+    Arc Direction       → Center  (tức là từ tâm AI tỏa ra)
+    Circle Center       → chọn "Querier"  (vị trí AI)
+    Projection Data
+      → Trace Mode      = Navigation  ← chỉ lấy điểm trên NavMesh
+      → Navigation Filter = None (hoặc filter của project)
+
+  ── B2. Thêm Test 1: Lọc điểm bị nhìn thấy từ mối đe dọa ──────────────
+  Click vào generator node → Details panel bên phải
+  → cuộn xuống "Tests" → nhấn nút "+" → chọn "Trace"
+
+  Test "Trace" → Details:
+    Test Purpose        = Filter Only
+    Filter Type         = Match
+    Bool Match          = FALSE   ← GIỮ LẠI điểm KHÔNG bị nhìn thấy
+    Context             = EQC_ThreatLocation  (asset vừa tạo ở bước A)
+    Trace Channel       = Visibility
+    Trace From Context  = Item     (từ điểm candidate)
+    Trace To Context    = EQC_ThreatLocation  (đến vị trí nguy hiểm)
+
+  ── B3. Thêm Test 2: Lọc điểm có thể đi đến được ───────────────────────
+  Nhấn "+" trong Tests → chọn "Pathfinding"
+
+  Test "Pathfinding" → Details:
+    Test Purpose        = Filter Only
+    Filter Type         = Match
+    Bool Match          = TRUE    ← chỉ giữ điểm AI đi được
+    Context             = Querier
+
+  ── B4. Thêm Test 3: Ưu tiên điểm gần AI nhất ──────────────────────────
+  Nhấn "+" → chọn "Distance"
+
+  Test "Distance" → Details:
+    Test Purpose        = Score Only
+    Distance To         = Querier
+    Scoring Factor      = -1.0    ← gần hơn = điểm cao hơn (âm đảo ngược)
+    Scoring Equation    = Linear
+
+  ── B5. Thêm Test 4 (tùy chọn): Ưu tiên điểm xa mối đe dọa hơn ────────
+  Nhấn "+" → chọn "Distance"
+
+  Test "Distance" → Details:
+    Test Purpose        = Score Only
+    Distance To         = EQC_ThreatLocation
+    Scoring Factor      = 1.0     ← xa threat hơn = điểm cao hơn
+    Scoring Equation    = Linear
+
+  Compile & Save EQS_FindCover
+
+─────────────────────────────────────────────────────────────────────────────
+4.2  Assets cần tạo mới cho BT_GUARD2
+─────────────────────────────────────────────────────────────────────────────
+
+════ BTTask_FindCoverWithEQS ════════════════════════════════════════════════
+Đường dẫn: Content/AI/Tasks/BTTask_FindCoverWithEQS
+Loại: Blueprint Class → cha là "BTTask Blueprint Base"
+
+  Biến (Instance Editable = true):
+    CoverLocationKey  : Blackboard Key Selector
+    EQSQuery          : EQS Request  (kiểu "AI EQS Query")
+
+  Cách tạo biến EQSQuery:
+    Add Variable → Type tìm "EQS Request" → đặt tên EQSQuery
+    Instance Editable = true → Default Value = EQS_FindCover
+
+  Override "Event Receive Execute AI":
+
+    ─ Node 1: Run EQS Query ─────────────────────────────────────────────
+    Kéo từ pin trắng (exec) → tìm "Run EQS Query"
+    (tên đầy đủ: "Run EQS Query (Blueprint)")
+      Querier          = ControlledPawn
+      Request          = EQSQuery (biến vừa tạo)
+      Run Mode         = Single Best Item
+
+    ─ Node 2: Nối pin Async callback "On Query Finished" ─────────────────
+    Node "Run EQS Query" có output exec pin "On Queried" hoặc
+    dùng binding callback — trong UE5 Blueprint thường dùng:
+      "Assign On Query Result" → tạo custom event "OnEQSResult"
+
+    Hoặc cách đơn giản hơn trong UE5.1+:
+    Dùng node "EQS Query Request" kết hợp với latent node:
+      → "Make EQSQuery Request" → nối vào "Run EQS Query"
+      → Pin "Query Result" output → Branch
+
+    ─ Cách đơn giản nhất (UE5): ─────────────────────────────────────────
+    1. Trong Event Receive Execute AI:
+       → "Run EQS Query" node
+         - Querier = ControlledPawn
+         - Query Template = EQS_FindCover (drag từ Content Browser vào)
+         - Run Mode = Single Best Item
+       → Node này có output "On Query Finish" (exec) và "Query Result" (object)
+
+    2. Từ "On Query Finish":
+       → "Get Location Of Query Result" (Target = Query Result)
+         - Item Index = 0
+         → Returns Vector
+
+    3. Branch: Is Valid (Query Result != None AND có ít nhất 1 item)?
+       → Dùng "Get Number Of Items" (Target = Query Result)
+         Branch: > 0?
+         TRUE:
+           → Set Blackboard Value as Vector
+               Key   = CoverLocationKey
+               Value = Get Location Of Query Result (Item Index 0)
+           → Finish Execute (Success = TRUE)
+         FALSE:
+           → Finish Execute (Success = FALSE)
+
+  Lưu ý: "Run EQS Query" là latent node (có đồng hồ nhỏ góc phải),
+  tức là task sẽ chờ EQS tính xong mới tiếp tục — KHÔNG cần gọi
+  Finish Execute từ exec flow chính, chỉ gọi từ "On Query Finish".
+
+════ BTTask_SetCrouch ═══════════════════════════════════════════════════════
+Đường dẫn: Content/AI/Tasks/BTTask_SetCrouch
+
+  Biến input:
+    bCrouch : Boolean (Exposed on spawn)
+
+  Override ReceiveExecute(OwnerController, ControlledPawn):
+    1. Cast ControlledPawn to Character
+    2. Branch: bCrouch == true?
+       TRUE  → Call Crouch() on Character
+       FALSE → Call UnCrouch() on Character
+    3. Finish Execute (Success = true)
+
+════ BTTask_WaitInCover ═════════════════════════════════════════════════════
+Đường dẫn: Content/AI/Tasks/BTTask_WaitInCover
+(Task bất đồng bộ có Tick – đây là Task phức tạp nhất)
+
+  Biến private:
+    WatchLocation : Vector
+    bWasInvestigationActive : Boolean = false
+    FallbackTimer : Float = 0.0
+
+  Override ReceiveExecute(OwnerController, ControlledPawn):
+    1. Get BB Vector (InvestigateLocation) → WatchLocation
+       (Nếu invalid thì dùng Noise Location)
+    2. Get Game Mode → Cast → IsInvestigationActive() → bWasInvestigationActive
+    3. FallbackTimer = 0.0
+    4. Không gọi FinishExecute ngay – Task tiếp tục tick
+
+  Override ReceiveTick(OwnerController, ControlledPawn, DeltaSeconds):
+    ── Bước 1: Luôn nhìn về phía WatchLocation ──────────────────────────
+    1. GetActorLocation(ControlledPawn) → MyLoc
+    2. (WatchLocation - MyLoc) → normalize → GetRotation
+    3. Cast OwnerController → AIController
+       → Set Focus to location: WatchLocation  (hoặc dùng SetFocalPoint)
+
+    ── Bước 2: Logic chờ ────────────────────────────────────────────────
+    4. Get Game Mode → Cast → IsInvestigationActive() → bCurrentlyActive
+
+    5. Branch: bCurrentlyActive == true?
+       TRUE:
+         bWasInvestigationActive = true
+         FallbackTimer = 0.0   ← reset timer mỗi khi investigation active
+         (→ không làm gì, tiếp tục tick)
+       FALSE:
+         Branch: bWasInvestigationActive == true?
+           TRUE  → [Guard1 vừa hoàn thành điều tra] → Finish Execute (Success = true)
+           FALSE → [Không có Guard1 nào → dùng timer 15s]
+                   FallbackTimer = FallbackTimer + DeltaSeconds
+                   If FallbackTimer >= 15.0:
+                     Finish Execute (Success = true)
+
+  Override ReceiveAbort(OwnerController, ControlledPawn):
+    1. Cast OwnerController → AIController → Clear Focus
+    2. Finish Abort
+
+════ BTDecorator_IsInvestigationActive ══════════════════════════════════════
+(TÙY CHỌN – dùng nếu muốn debug hoặc dùng trong BT khác)
+Đường dẫn: Content/AI/Decorators/BTDecorator_IsInvestigationActive
+
+  Override PerformConditionCheckAI(AIController, ControlledPawn):
+    1. Get Game Mode → Cast → IsInvestigationActive()
+    2. Return kết quả (bool)
+
+─────────────────────────────────────────────────────────────────────────────
+4.3  Cấu trúc BT_GUARD2
+─────────────────────────────────────────────────────────────────────────────
+Tạo file mới: Content/AI/BT_GUARD2
+Blackboard: BB_Shooter (hoặc BB_Guard2 kế thừa BB_Shooter)
+
+ROOT
+└── Selector
+    │
+    ├── [Dec: Taking Damage, aborts both] → Cooldown 3s → Sequence
+    │   ├── BTTask_SetCrouch (bCrouch = FALSE)  ← đứng dậy trước khi chạy
+    │   ├── Move To (BP_FindRandomLocation, radius 500)
+    │   └── BP_ClearBlackboardValues
+    │
+    ├── [Dec: Is Armed, aborts self] → Selector
+    │   │   [Service: BTService_UpdateLastKnownLocation]  ← cùng service với BT_GUARD1
+    │   │
+    │   ├── ──── ENGAGE ENEMY (giữ nguyên như BT gốc) ────────────────────
+    │   │   [Dec: Has Ammo, aborts self]
+    │   │   [Dec: Enemy is Set, aborts both]
+    │   │   [Dec: BP_IsAlive, aborts self] → Simple Parallel
+    │   │       Main:  Hold Aiming (Target: Enemy)
+    │   │       Sub:   Sequence
+    │   │               ├── BP_CheckTargetOnSight (Target: Enemy)
+    │   │               ├── Wait 0.2±0.2s
+    │   │               ├── Shoot (Number Of Shots: 8)
+    │   │               └── Wait 1.0±0.5s
+    │   │
+    │   ├── ──── RELOAD WEAPON (giữ nguyên) ─────────────────────────────
+    │   │   [Dec: No Ammo inversed] → BP_Shooter_Task_ReloadWeapon
+    │   │
+    │   ├── ──── TAKE COVER (khi có tiếng động hoặc InvestigateLocation) ─
+    │   │   [Dec: InvestigateLocation is Set, aborts both] → Sequence "TakeCover"
+    │   │   │     Abort type: BOTH (để Taking Damage ngắt được)
+    │   │   │
+    │   │   ├── BTTask_FindCoverWithEQS
+    │   │   │     ↑ chạy EQS_FindCover → ghi vào CoverLocation BB
+    │   │   │
+    │   │   ├── Move To (Blackboard key: CoverLocation, Acceptable Radius: 80)
+    │   │   │     ↑ di chuyển đến cover
+    │   │   │
+    │   │   ├── BTTask_SetCrouch (bCrouch = TRUE)
+    │   │   │     ↑ cúi xuống
+    │   │   │
+    │   │   ├── BTTask_WaitInCover
+    │   │   │     ↑ nhìn về phía nguy hiểm + chờ đến khi điều kiện đúng
+    │   │   │     Logic bên trong:
+    │   │   │       - Nếu có Guard1 đang điều tra → chờ Guard1 xong
+    │   │   │       - Nếu không có Guard1 → đợi 15 giây
+    │   │   │
+    │   │   ├── BTTask_SetCrouch (bCrouch = FALSE)
+    │   │   │     ↑ đứng dậy
+    │   │   │
+    │   │   └── BP_ClearBlackboardValues
+    │   │         ↑ xóa InvestigateLocation, CoverLocation, Noise Location
+    │   │
+    │   ├── ──── NOISE DETECT → SET INVESTIGATE LOCATION ────────────────
+    │   │   [Dec: Noise Location is Set, aborts both] → Sequence "Copy Noise"
+    │   │   ├── BTTask_SetInvestigateFromNoise
+    │   │   │     ↑ copy NoiseLocation → InvestigateLocation
+    │   │   └── (không cần ClearBlackboardValues ở đây –
+    │   │         InvestigateLocation vừa set sẽ kích hoạt nhánh Take Cover)
+    │   │
+    │   └── ──── OVERWATCH (giữ nguyên) ──────────────────────────────────
+    │       Sequence
+    │       ├── BP_Shooter_Task_Overwatch
+    │       └── Wait 1.0s
+    │
+    └── [Dec: Is Unarmed, inversed] → BP_Shooter_Task_EquipWeapon (Firearm)
+
+─────────────────────────────────────────────────────────────────────────────
+4.4  Thiết lập AIController cho Guard2
+─────────────────────────────────────────────────────────────────────────────
+  Có thể dùng chung AIController với Guard1, chỉ cần đổi:
+    RunBehaviorTree → BT_GUARD2
+
+  AI Perception: Giữ nguyên cấu hình Hearing như Guard1.
+
+==============================================================================
+PHẦN 5 – BẢNG TỔNG KẾT CÁC ASSETS CẦN TẠO
+==============================================================================
+
+  Loại           | Tên Asset                          | Dùng bởi
+  ───────────────┼────────────────────────────────────┼────────────────────
+  BB Key         | InvestigateLocation (Vector)        | BT_GUARD1, BT_GUARD2
+  BB Key         | CoverLocation (Vector)              | BT_GUARD2
+  BB Key         | bIsInvestigating (Bool)             | BT_GUARD1
+  BB Key         | LastKnownEnemyLocation (Vector)     | BT_GUARD1, BT_GUARD2
+  ───────────────┼────────────────────────────────────┼────────────────────
+  BTTask         | BTTask_SetInvestigating             | BT_GUARD1
+  BTTask         | BTTask_SetInvestigateFromNoise      | BT_GUARD1, BT_GUARD2
+  BTTask         | BTTask_FindCoverWithEQS             | BT_GUARD2
+  BTTask         | BTTask_SetCrouch                    | BT_GUARD2
+  BTTask         | BTTask_WaitInCover                  | BT_GUARD2
+  ───────────────┼────────────────────────────────────┼────────────────────
+  BTService      | BTService_UpdateLastKnownLocation   | BT_GUARD1, BT_GUARD2
+  ───────────────┼────────────────────────────────────┼────────────────────
+  GameMode       | InvestigatorCount (Int)             | BT_GUARD1
+  GameMode func  | RegisterInvestigator()              | BTTask_SetInvestigating
+  GameMode func  | UnregisterInvestigator()            | BTTask_SetInvestigating
+  GameMode func  | IsInvestigationActive() → Bool      | BTTask_WaitInCover
+  ───────────────┼────────────────────────────────────┼────────────────────
+  EQS Context    | EQC_ThreatLocation                 | EQS_FindCover
+  EQS Query      | EQS_FindCover                      | BTTask_FindCoverWithEQS
+  ───────────────┼────────────────────────────────────┼────────────────────
+  BT             | BT_GUARD1                           | Guard tính cách 1
+  BT             | BT_GUARD2                           | Guard tính cách 3
+  (BB_Shooter gốc không đổi)
+
+==============================================================================
+PHẦN 6 – THỨ TỰ THỰC HIỆN KHUYẾN NGHỊ
+==============================================================================
+
+  Bước 1:  Thêm 4 BB keys vào BB_Shooter                          ✅ XONG
+  Bước 2:  Thêm InvestigatorCount + 3 hàm vào GameMode             ✅ XONG
+  Bước 3:  Tạo BTTask_SetInvestigating                             ✅ XONG
+  Bước 4:  Tạo BTTask_SetInvestigateFromNoise                      ✅ XONG
+  Bước 5:  Tạo BTService_UpdateLastKnownLocation                   ✅ XONG
+  Bước 6:  Gán Blackboard Asset vào ROOT của BT_Guard1 = BB_Shooter
+  Bước 7:  Sửa BT_Guard1 theo cấu trúc phần 2.2 (từ hướng dẫn trước)
+  Bước 8:  Test BT_Guard1 hoạt động đúng
+  Bước 9:  Tạo EQC_ThreatLocation (EQS Context, xem phần 4.1.A)
+  Bước 10: Tạo EQS_FindCover (Environment Query, xem phần 4.1.B)
+  Bước 11: Bật plugin EQS trong Project Settings (nếu chưa bật)
+             Edit → Plugins → tìm "Environment Query" → Enable
+  Bước 12: Tạo BTTask_FindCoverWithEQS (xem phần 4.2)
+  Bước 13: Tạo BTTask_SetCrouch
+  Bước 14: Tạo BTTask_WaitInCover
+  Bước 15: Tạo BT_Guard2 theo cấu trúc phần 4.3 → Test
+  Bước 16: Test tích hợp: đặt 1 Guard1 + 1 Guard2 cùng khu vực,
+           kích hoạt noise → kiểm tra Guard2 có chạy vào cover không
+           và có đợi Guard1 xong mới đứng dậy không
+
+==============================================================================
+PHẦN 7 – LƯU Ý KỸ THUẬT
+==============================================================================
+
+• BTTask_WaitInCover dùng tick nội bộ. Trong UE5, nhớ tích
+  "Notify Observer" = "On Value Change" ở decorator liên quan nếu cần,
+  và đặt "Interval" hợp lý để không tick quá dày.
+
+• SetFocalPoint vs SetFocus: Dùng SetFocalPoint(Location, Clamp) để Guard2
+  nhìn về hướng nguy hiểm mà không cần Target Actor tồn tại trong scene.
+  Gọi ClearFocus() trong ReceiveAbort của BTTask_WaitInCover.
+
+• BP_ClearBlackboardValues gốc xóa tất cả key. Nếu muốn chỉ xóa một số key,
+  hãy tạo task riêng hoặc sửa BP_ClearBlackboardValues để có tùy chọn.
+
+• Với InvestigatorCount trong GameMode: nếu Guard1 bị kill đột ngột (hit
+  Taking Damage và thoát khỏi Investigate branch), hàm UnregisterInvestigator
+  có thể không được gọi. Giải pháp: Gọi UnregisterInvestigator trong
+  OnDeath event của Guard1 nếu bIsInvestigating == true, hoặc dùng timer
+  reset hàng ngày trong GameMode (ví dụ: cứ 30s reset về 0 nếu không có
+  Guard1 nào đang sống).
+
+• EQS Debug: Trong Play mode, bật "Show EQS" trong AI Debug (dấu ' để mở
+  AI Debug, rồi số 4 để xem EQS). Sẽ thấy điểm xanh (pass) và đỏ (fail)
+  trực quan trên map — rất hữu ích để tinh chỉnh Outer Radius và tests.
+
+• Nếu EQS trả về 0 item (không tìm được cover): Guard2 sẽ FAIL task
+  BTTask_FindCoverWithEQS → Sequence TakeCover fail → rơi xuống Overwatch.
+  Đây là hành vi đúng — guard đứng quan sát thay vì cố tìm cover không có.
+
+• Tăng Outer Radius trong EQS nếu map rộng (ví dụ 1200), giảm xuống 300
+  nếu map chật để tránh guard chạy quá xa tìm cover.
+
+• Thứ tự decorator quan trọng: Trong UE BT, decorator xử lý từ trên xuống /
+  trái sang phải. Đảm bảo "Taking Damage" luôn là nhánh đầu tiên để có
+  priority cao nhất (aborts both sẽ override mọi thứ).
+
+==============================================================================
+PHẦN 8 – VỀ FILE IMPORT BEHAVIOR TREE (.uasset)
+==============================================================================
+Behavior Tree trong UE5 được lưu dưới dạng binary .uasset. Không có cách
+nào tạo file .uasset hợp lệ từ text thuần túy để import vào project vì:
+  1. Format binary – không có text serialization chính thức
+  2. Các node BT tham chiếu đến class path của project bạn (GameMode tên gì,
+     BB_Shooter nằm ở path nào, v.v.) – thông tin này unique với từng project
+  3. UE5 không hỗ trợ import BT từ JSON/XML
+
+Giải pháp thay thế nếu muốn chia sẻ hoặc tái sử dụng:
+  • Dùng Plugin "BT Import/Export" (cộng đồng) – tìm trên Fab/Marketplace
+  • Tạo BT trong project rồi migrate folder qua project khác (Edit > Migrate)
+  • Dùng Source Control (Git) để chia sẻ toàn bộ project
+  • Với UE5.6 trở đi: xem xét dùng State Tree thay BT để có serialization tốt hơn
+
+==============================================================================
