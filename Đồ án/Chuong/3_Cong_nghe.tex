@@ -1,7 +1,7 @@
 \documentclass[../DoAn.tex]{subfiles}
 \begin{document}
 
-\chapter{Công nghệ sử dụng}
+\chapter{Nền tảng lý thuyết và Công nghệ sử dụng}
 \label{chuong:cong_nghe}
 
 Chương này trình bày các công nghệ, nền tảng cơ sở đã được lựa chọn để giải quyết các bài toán và thiết kế trò chơi được đặt ra ở Chương 2. Với mỗi công nghệ/nền tảng, ưu nhược điểm so với các lựa chọn thay thế sẽ được phân tích để làm rõ lý do sử dụng trong dự án.
@@ -9,7 +9,7 @@ Chương này trình bày các công nghệ, nền tảng cơ sở đã được
 \section{Nền tảng phát triển Unreal Engine 5.6}
 \label{section:3.1}
 
-Để vận hành một trò chơi 3D với góc nhìn thứ nhất, yêu cầu về mặt đồ họa theo thời gian thực (real-time rendering), hiệu năng mô phỏng vật lý và trí tuệ nhân tạo (AI) là vô cùng khắt khe. Dự án sử dụng bộ khung (framework) của Unreal Engine 5.6. Thay vì đi sâu vào hướng dẫn công cụ cấu hình, phần này tập trung phân tích các nền tảng thuật toán cốt lõi bên trong Unreal Engine giải quyết các yêu cầu kỹ thuật của dự án.
+Để vận hành một trò chơi 3D với góc nhìn thứ ba, yêu cầu về mặt đồ họa theo thời gian thực (real-time rendering), hiệu năng mô phỏng vật lý và trí tuệ nhân tạo (AI) là vô cùng khắt khe. Dự án sử dụng bộ khung (framework) của Unreal Engine 5.6. Thay vì đi sâu vào hướng dẫn công cụ cấu hình, phần này tập trung phân tích các nền tảng thuật toán cốt lõi bên trong Unreal Engine giải quyết các yêu cầu kỹ thuật của dự án.
 
 \subsection{Chiếu sáng toàn cầu động với Lumen (Lumen Global Illumination)}
 Một trong những điểm trọng tâm của đồ án là cơ chế cổng không gian (Portal). Việc kết nối và di chuyển giữa các không gian có điều kiện ánh sáng hoàn toàn khác nhau khiến cho ánh sáng trong màn chơi biến đổi linh hoạt và liên tục.
