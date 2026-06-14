@@ -1,0 +1,26 @@
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Tổng quan hệ thống giao diện hiển thị trên màn hình}}{15}{figure.caption.7}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Chi tiết bảng hướng dẫn thao tác phím}}{15}{figure.caption.8}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Giao diện tổng quan trong màn hình trò chơi, hiển thị góc nhìn thứ ba và các thành phần giao diện cơ bản.}}{19}{figure.caption.10}%
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Nhân vật thiết lập thành công cổng không gian liên thông giữa hai không gian, thể hiện hiệu ứng kết xuất hình ảnh chính xác về mặt quang học và vật lý.}}{19}{figure.caption.11}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {6.1}{\ignorespaces Cấu trúc sơ đồ logic sau khi loại bỏ các phụ thuộc hoạt ảnh góc nhìn thứ nhất.}}{23}{figure.caption.12}%
+\contentsline {figure}{\numberline {6.2}{\ignorespaces Cấu hình tùy chỉnh vật lý của đối tượng đạn nhằm khắc phục xung đột với thanh kết nối máy quay.}}{23}{figure.caption.13}%
+\contentsline {figure}{\numberline {6.3}{\ignorespaces Sơ đồ luồng sự kiện của thành phần vũ khí được kết nối qua chân thực thi khởi đầu để ngăn chặn lỗi đa luồng.}}{24}{figure.caption.14}%
+\contentsline {figure}{\numberline {6.4}{\ignorespaces Sơ đồ logic xử lý tín hiệu đầu vào nhằm bật/tắt ghi đè ngữ cảnh điều khiển.}}{24}{figure.caption.15}%
+\contentsline {figure}{\numberline {6.5}{\ignorespaces Phương pháp gán liên kết đối tượng thông qua sự kiện khởi đầu trò chơi nhằm khắc phục lỗi rỗng.}}{25}{figure.caption.16}%
+\contentsline {figure}{\numberline {6.6}{\ignorespaces Tích hợp giao diện giao tiếp dữ liệu vào lớp nhân vật nhằm đáp ứng điều kiện nhận diện dịch chuyển của hệ thống.}}{26}{figure.caption.17}%
+\contentsline {figure}{\numberline {6.7}{\ignorespaces Cơ chế rẽ nhánh trạng thái nhiệm vụ dựa trên biến số nguyên bên trong hệ thống quản lý.}}{27}{figure.caption.18}%
+\contentsline {figure}{\numberline {6.8}{\ignorespaces Cấu trúc thành phần của điểm chỉ dẫn và luồng sự kiện cập nhật tiến trình nhiệm vụ khi phát sinh va chạm.}}{27}{figure.caption.19}%
+\contentsline {figure}{\numberline {6.9}{\ignorespaces Cơ chế phòng lỗi sử dụng nút kiểm tra tính hợp lệ trước khi cập nhật giao diện người dùng để tránh lỗi đồng bộ.}}{28}{figure.caption.20}%
+\contentsline {figure}{\numberline {6.10}{\ignorespaces Thuật toán phân bổ vị trí ngẫu nhiên trên lưới điều hướng trong bán kính cho trước nhằm tránh lỗi chồng chéo vật lý.}}{29}{figure.caption.21}%
+\contentsline {figure}{\numberline {6.11}{\ignorespaces Luồng logic truyền dữ liệu trang bị động từ hệ thống khởi tạo vào thành phần túi đồ của kẻ địch.}}{29}{figure.caption.22}%
+\contentsline {figure}{\numberline {6.12}{\ignorespaces Cấu hình tham số mảng trang bị tùy chỉnh trên giao diện thiết kế cho từng hệ thống khởi tạo.}}{30}{figure.caption.23}%
+\contentsline {figure}{\numberline {6.13}{\ignorespaces Vòng lặp duyệt mảng trong hệ thống quản lý nhiệm vụ để kích hoạt đồng loạt chuỗi sự kiện xuất hiện kẻ địch.}}{30}{figure.caption.24}%
+\addvspace {10\p@ }
+\contentsfinish 
+\contentsfinish 

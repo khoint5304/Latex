@@ -1,0 +1,44 @@
+\documentclass[../DoAn.tex]{subfiles}
+\begin{document}
+
+\section{Kết luận}
+
+Quá trình thực hiện đồ án tốt nghiệp đã hoàn thành mục tiêu xây dựng thành công tựa game hành động bắn súng góc nhìn thứ ba mang tên "Paradox Caliber". Bằng việc khai thác nền tảng Unreal Engine 5 cùng hệ sinh thái tài nguyên mở, dự án đã mang đến một nguyên mẫu trò chơi hoàn chỉnh về cơ chế, ổn định về hiệu năng và đạt chất lượng hình ảnh cao mà vẫn tối ưu hóa được chi phí sản xuất.
+
+\subsection*{1. Đánh giá tính mới và sự khác biệt}
+Trong khi các sản phẩm trên thị trường thường tập trung khai thác đơn lẻ một cơ chế cốt lõi như hệ thống ẩn nấp (như \textit{Gears of War}), dịch chuyển không gian (như \textit{Portal}, \textit{Splitgate}) hay làm chậm thời gian (như \textit{Max Payne}), "Paradox Caliber" đã thử nghiệm tích hợp đồng thời cả ba hệ thống cơ chế thao túng (Không gian, Thời gian và Vật cản) vào chung một vòng lặp lối chơi. Sự kết hợp này mang lại chiều sâu chiến thuật mới, đòi hỏi người chơi phải kết hợp kỹ năng quan sát, phản xạ và phân tích môi trường phức tạp cao hơn so với các tựa game bắn súng truyền thống.
+
+\subsection*{2. Những kết quả đạt được}
+\begin{itemize}
+    \item Phân tích kỹ thuật dịch ngược và tùy biến thành công logic lõi của hệ thống cổng không gian, chuyển đổi mượt mà từ góc nhìn thứ nhất sang góc nhìn thứ ba. Khắc phục triệt để các sai lệch về hệ quy chiếu dò tia của máy quay và xử lý an toàn các xung đột vật lý.
+    \item Thiết kế và xây dựng thành công 5 màn chơi tuyến tính với độ khó tăng dần, cân bằng tốt giữa yếu tố giải đố không gian và thử thách chiến đấu.
+    \item Tích hợp hệ thống quản lý nhiệm vụ linh hoạt theo máy trạng thái, kết hợp cùng trí tuệ nhân tạo sử dụng cây hành vi, giúp kẻ địch có khả năng tự điều hướng bằng lưới điều hướng, tìm chỗ nấp và phản ứng chiến đấu thông minh.
+    \item Ứng dụng hiệu quả công nghệ chiếu sáng thời gian thực và kỹ thuật kết xuất hình ảnh nâng cao, đảm bảo chất lượng đồ họa hiện đại.
+\end{itemize}
+
+\subsection*{3. Những mặt hạn chế và tồn tại}
+Bên cạnh các kết quả đạt được, phiên bản nguyên mẫu của dự án vẫn tồn tại một số hạn chế nhất định. Việc bảo toàn động lượng vật lý của nhân vật ở những pha dịch chuyển không trung phức tạp đôi khi chưa đạt được độ ổn định tối đa. Về mặt nội dung, cốt truyện hiện tại mới chỉ giải quyết cao trào ở tuyến trùm cuối mà chưa khai thác sâu các nhánh khái niệm đa vũ trụ. Ngoài ra, việc hệ thống phải liên tục kết xuất hình ảnh qua cổng ảo kết hợp cùng hệ thống chiếu sáng phức tạp tạo ra áp lực tính toán lớn, có thể gây sụt giảm tốc độ khung hình trên các thiết bị có phần cứng hạn chế.
+
+\subsection*{4. Bài học kinh nghiệm}
+Quá trình triển khai dự án đã giúp củng cố vững chắc tư duy lập trình trực quan Blueprint trong Unreal Engine 5, đồng thời mở rộng kiến thức về toán học không gian và quy trình kết xuất đồ họa. Giá trị cốt lõi nhất rút ra từ đồ án tốt nghiệp là kỹ năng đọc hiểu thuật toán, bóc tách tài nguyên mã nguồn mở và tái cấu trúc chúng thành các mô-đun an toàn, phù hợp với kiến trúc dự án cá nhân. Kết quả của đồ án cũng chứng minh tiềm năng phát triển của các nhà phát triển game độc lập tại Việt Nam khi biết tận dụng hiệu quả các công cụ tiêu chuẩn quốc tế.
+
+\section{Hướng phát triển}
+
+Dựa trên nền tảng kiến trúc kỹ thuật đã được thiết lập, dự án "Paradox Caliber" mở ra nhiều định hướng tiềm năng để nâng cấp thành một sản phẩm thương mại hoàn thiện.
+
+\subsection*{1. Tối ưu hóa hiệu năng và hoàn thiện tính năng hiện tại}
+\begin{itemize}
+    \item \textbf{Nâng cấp hệ thống vật lý cổng không gian:} Tinh chỉnh thuật toán nội suy vector vận tốc khi nhân vật tương tác với cổng ảo trong môi trường không trọng lực, tạo tiền đề cho các cơ chế di chuyển và chiến đấu trên không phức tạp.
+    \item \textbf{Tối ưu hóa hiệu năng:} Áp dụng kỹ thuật phân bổ tài nguyên động, giới hạn độ phân giải của hình ảnh kết xuất dựa trên khoảng cách từ người chơi đến cổng. Tích hợp menu tùy chỉnh đồ họa cho phép tự động vô hiệu hóa hệ thống chiếu sáng nâng cao để đảm bảo trải nghiệm mượt mà trên các máy tính cấu hình thấp.
+    \item \textbf{Nâng cấp trí tuệ nhân tạo:} Bổ sung các luồng hành vi chiến thuật nhóm (như gọi viện binh) vào cây hành vi. Thiết kế thêm các lớp kẻ địch cấp cao hoặc trùm có khả năng sử dụng chính cổng không gian để truy đuổi và tấn công người chơi.
+\end{itemize}
+
+\subsection*{2. Mở rộng nội dung và trải nghiệm mới}
+\begin{itemize}
+    \item \textbf{Mở rộng kịch bản và màn chơi:} Thiết kế thêm các phân khu môi trường mới, phát triển cốt truyện nhằm làm sáng tỏ nguồn gốc của các binh lính nhân bản và quy mô cuộc chiến liên không gian.
+    \item \textbf{Chế độ nhiều người chơi:} Chuyển đổi các hàm thực thi cốt lõi sang môi trường mạng, cho phép hai hoặc nhiều người chơi phối hợp giải các câu đố không gian phức tạp, gia tăng đáng kể giá trị chơi lại.
+    \item \textbf{Đa dạng hóa hệ thống vũ khí và chế tạo:} Nâng cấp hệ thống túi đồ để bổ sung tính năng chế tạo, giúp người chơi có thể chế tạo nhiều thứ hơn. Cho phép người chơi thu thập tài nguyên để tùy biến cấu trúc đạn của súng mở cổng (ví dụ: tạo cổng gây hiệu ứng làm chậm thời gian, hoặc cổng phản đòn sát thương).
+    \item \textbf{Cải thiện hơn nữa về hệ thống UI và trải nghiệm người dùng:} Tối ưu hóa bố cục giao diện, bổ sung các hiệu ứng phản hồi trực quan khi người chơi tương tác với môi trường, giúp nâng cao trải nghiệm nhập vai và chiến thuật, nâng cao khả năng tuỳ chỉnh của người chơi trong việc thiết lập các phím tắt và điều khiển cũng như các tuỳ chỉnh khác nhằm phù hợp với nhu cầu cá nhân.
+\end{itemize}
+
+\end{document}

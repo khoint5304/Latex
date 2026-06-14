@@ -1,0 +1,9 @@
+[0] Config.pm:328> INFO - This is Biber 2.21
+[0] Config.pm:331> INFO - Logfile is 'D:\Sach_PDF\Do_an\Latex\Do_an\Chuong\PDF\0_3_Tom_tat_noi_dung.blg'
+[140] biber-MSWIN64:342> INFO - === 
+[192] Biber.pm:421> INFO - Reading 'D:\Sach_PDF\Do_an\Latex\Do_an\Chuong\PDF\0_3_Tom_tat_noi_dung.bcf'
+[263] Biber.pm:1002> INFO - Found 0 citekeys in bib section 0
+[273] bbl.pm:676> INFO - Writing 'D:\Sach_PDF\Do_an\Latex\Do_an\Chuong\PDF\0_3_Tom_tat_noi_dung.bbl' with encoding 'UTF-8'
+[273] bbl.pm:779> INFO - Output to D:\Sach_PDF\Do_an\Latex\Do_an\Chuong\PDF\0_3_Tom_tat_noi_dung.bbl
+[273] Biber.pm:132> WARN - The file 'D:\Sach_PDF\Do_an\Latex\Do_an\Chuong\PDF\0_3_Tom_tat_noi_dung.bcf' does not contain any citations!
+[273] Biber.pm:134> INFO - WARNINGS: 1

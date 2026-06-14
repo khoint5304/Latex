@@ -1,0 +1,79 @@
+\ttl@change@i {\@ne }{chapter}{0.0cm}{\bfseries \vspace {0.3cm}}{{\bfseries {\scshape } CHƯƠNG \thecontentslabel .\ }}{}{\titlerule *[0.3pc]{.}\contentspage }\relax 
+\ttl@change@v {chapter}{}{}{}\relax 
+\ttl@change@i {\@ne }{section}{0.0cm}{\vspace {0.3cm}}{\thecontentslabel \ }{}{\titlerule *[0.3pc]{.}\contentspage }\relax 
+\ttl@change@v {section}{}{}{}\relax 
+\ttl@change@i {\@ne }{subsection}{1.0cm}{\vspace {0.3cm}}{\thecontentslabel \ }{}{\titlerule *[0.3pc]{.}\contentspage }\relax 
+\ttl@change@v {subsection}{}{}{}\relax 
+\thispagestyle {empty}
+\contentsline {section}{\hbox to\@tempdima {\hfil } DANH MỤC TỪ VIẾT TẮT}{vii}{section*.5}%
+\contentsline {section}{\hbox to\@tempdima {\hfil } DANH MỤC THUẬT NGỮ}{ix}{section*.6}%
+\contentsline {chapter}{\numberline {1}GIỚI THIỆU ĐỀ TÀI}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Đặt vấn đề}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Mục tiêu và phạm vi đề tài}{2}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Định hướng giải pháp}{3}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Bố cục đồ án}{3}{section.1.4}%
+\contentsline {chapter}{\numberline {2}KHẢO SÁT VÀ PHÂN TÍCH YÊU CẦU}{4}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Khảo sát hiện trạng và đánh giá sản phẩm tương tự}{4}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Mục đích của trò chơi}{4}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Định hướng sử dụng}{4}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Cơ sở của định hướng sử dụng}{5}{section.2.4}%
+\contentsline {chapter}{\numberline {3}NỀN TẢNG LÝ THUYẾT VÀ CÔNG NGHỆ SỬ DỤNG}{6}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Nền tảng phát triển Unreal Engine 5.6}{6}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Chiếu sáng toàn cục với Lumen}{6}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}Trí tuệ nhân tạo qua Cây hành vi (Behavior Tree)}{6}{subsection.3.1.2}%
+\contentsline {section}{\numberline {3.2}Hệ thống kiểm soát phiên bản Perforce Helix Core (P4V)}{7}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Các nền tảng thay thế}{7}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Lý do sử dụng Perforce (P4V)}{7}{subsection.3.2.2}%
+\contentsline {chapter}{\numberline {4}THIẾT KẾ TRÒ CHƠI}{9}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Tổng quan trò chơi}{9}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Lối chơi}{9}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Cơ chế của trò chơi}{10}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Luật}{10}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Mô hình thế giới}{10}{subsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.3.3}Các hành động của nhân vật}{10}{subsection.4.3.3}%
+\contentsline {subsection}{\numberline {4.3.4}Các tùy chọn trò chơi}{10}{subsection.4.3.4}%
+\contentsline {subsection}{\numberline {4.3.5}Phản hồi cho người chơi}{11}{subsection.4.3.5}%
+\contentsline {section}{\numberline {4.4}Điều khiển}{11}{section.4.4}%
+\contentsline {section}{\numberline {4.5}Cốt truyện}{11}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Nhân vật và kẻ địch}{12}{section.4.6}%
+\contentsline {section}{\numberline {4.7}Màn chơi}{12}{section.4.7}%
+\contentsline {subsection}{\numberline {4.7.1}Màn chơi 1: Cấp độ khởi động}{12}{subsection.4.7.1}%
+\contentsline {subsection}{\numberline {4.7.2}Màn chơi 2: Mô phỏng thực tế ảo}{13}{subsection.4.7.2}%
+\contentsline {subsection}{\numberline {4.7.3}Màn chơi 3: Nhà hát}{13}{subsection.4.7.3}%
+\contentsline {subsection}{\numberline {4.7.4}Màn chơi 4: Nhà xưởng hoang phế}{13}{subsection.4.7.4}%
+\contentsline {subsection}{\numberline {4.7.5}Màn chơi 5: Lõi năng lượng}{14}{subsection.4.7.5}%
+\contentsline {section}{\numberline {4.8}Giao diện người dùng}{14}{section.4.8}%
+\contentsline {chapter}{\numberline {5}TRIỂN KHAI VÀ ĐÁNH GIÁ HỆ THỐNG}{16}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Môi trường và công cụ phát triển}{16}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Yêu cầu hệ thống}{16}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}Cấu hình máy trạm phát triển}{16}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}Cấu hình trải nghiệm trò chơi khuyến nghị}{16}{subsection.5.2.2}%
+\contentsline {section}{\numberline {5.3}Triển khai và Cài đặt trò chơi}{17}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Cách thức đóng gói và tiếp cận cho người chơi}{17}{subsection.5.3.1}%
+\contentsline {subsection}{\numberline {5.3.2}Định hướng chia sẻ mã nguồn phát triển}{17}{subsection.5.3.2}%
+\contentsline {section}{\numberline {5.4}Khả năng mở rộng dự án}{18}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Kết quả đạt được}{18}{section.5.5}%
+\contentsline {section}{\numberline {5.6}Hình ảnh sản phẩm}{18}{section.5.6}%
+\contentsline {chapter}{\numberline {6}CÁC GIẢI PHÁP VÀ ĐÓNG GÓP NỔI BẬT}{20}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Tích hợp và tùy biến hệ thống cổng không gian}{20}{section.6.1}%
+\contentsline {subsection}{\numberline {6.1.1}Dẫn dắt vấn đề}{20}{subsection.6.1.1}%
+\contentsline {subsection}{\numberline {6.1.2}Phân tích và làm chủ logic hoạt động của \texttt {BP\_Portal}}{20}{subsection.6.1.2}%
+\contentsline {subsection}{\numberline {6.1.3}Thiết kế thành phần vũ khí và Tối ưu hóa nhập liệu}{21}{subsection.6.1.3}%
+\contentsline {subsection}{\numberline {6.1.4}Tùy biến và giải quyết vấn đề góc nhìn thứ ba}{22}{subsection.6.1.4}%
+\contentsline {subsection}{\numberline {6.1.5}Tối ưu hóa độ ổn định của hệ thống nhập liệu}{23}{subsection.6.1.5}%
+\contentsline {subsection}{\numberline {6.1.6}Khắc phục lỗi tương tác và giao diện giao tiếp dữ liệu}{24}{subsection.6.1.6}%
+\contentsline {section}{\numberline {6.2}Kiến trúc hệ thống nhiệm vụ mở rộng linh hoạt}{25}{section.6.2}%
+\contentsline {subsection}{\numberline {6.2.1}Dẫn dắt vấn đề và Tư duy thiết kế}{25}{subsection.6.2.1}%
+\contentsline {subsection}{\numberline {6.2.2}Xây dựng khối điều phối trung tâm}{26}{subsection.6.2.2}%
+\contentsline {subsection}{\numberline {6.2.3}Tối ưu hóa điểm chỉ dẫn và vùng kích hoạt}{26}{subsection.6.2.3}%
+\contentsline {subsection}{\numberline {6.2.4}Xử lý biệt lệ giao diện và Tích hợp chuỗi sự kiện}{27}{subsection.6.2.4}%
+\contentsline {section}{\numberline {6.3}Thiết kế hệ thống khởi tạo kẻ địch}{28}{section.6.3}%
+\contentsline {subsection}{\numberline {6.3.1}Dẫn dắt vấn đề}{28}{subsection.6.3.1}%
+\contentsline {subsection}{\numberline {6.3.2}Thuật toán phân bổ vị trí an toàn trên lưới điều hướng}{28}{subsection.6.3.2}%
+\contentsline {subsection}{\numberline {6.3.3}Quản lý trang bị động qua thành phần chức năng}{28}{subsection.6.3.3}%
+\contentsline {subsection}{\numberline {6.3.4}Khắc phục lỗi điều khiển trí tuệ nhân tạo và Liên kết kịch bản}{29}{subsection.6.3.4}%
+\contentsline {chapter}{\numberline {7}KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN}{31}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Kết luận}{31}{section.7.1}%
+\contentsline {section}{\numberline {7.2}Hướng phát triển}{32}{section.7.2}%
+\contentsline {chapter}{TÀI LIỆU THAM KHẢO}{34}{section*.26}%
+\contentsfinish 

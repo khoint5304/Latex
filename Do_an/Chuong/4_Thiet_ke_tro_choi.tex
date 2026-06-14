@@ -1,0 +1,145 @@
+\documentclass[../DoAn.tex]{subfiles}
+\begin{document}
+
+\section{Tổng quan trò chơi}
+Mục này cung cấp nhanh các đặc điểm cốt lõi cấu thành nên sản phẩm trò chơi:
+\begin{itemize}
+    \item \textbf{Tên trò chơi}: Paradox Caliber.
+    \item \textbf{Bản sắc của trò chơi}: Một tựa game hành động bắn súng góc nhìn thứ ba kết hợp giải đố mở rộng không gian bằng khả năng mở cổng dịch chuyển, đính kèm cơ chế thao túng thời gian, đặt trong bối cảnh giả tưởng về cuộc chiến đa vũ trụ, dọc theo dòng thời gian.
+    \item \textbf{Trụ cột trò chơi}: Phản xạ biên độ cao -- Tính toán không gian -- Hành động chiến thuật.
+    \item \textbf{Khẩu hiệu}: "Lội ngược thời gian. Xé toạc không gian."
+    \item \textbf{Phong cách đồ họa}: Đồ họa 3D chân thực, sắc nét. Kết hợp giữa phong cách khoa học viễn tưởng với các khung cảnh tàn tích công nghiệp, dựa trên nền tảng ánh sáng thật và vật lý của Unreal Engine 5.6.
+    \item \textbf{Góc nhìn máy quay}: Góc nhìn thứ ba qua vai chiến thuật.
+\end{itemize}
+
+\section{Lối chơi}
+\begin{itemize}
+    \item \textbf{Ấn tượng ban đầu}: Khi bước vào trò chơi, người chơi sẽ ngay lập tức được trực quan hóa quá trình điều khiển thông qua giao diện nhiệm vụ hướng dẫn đi đến các điểm đánh dấu trên bản đồ. Các hiệu ứng làm chậm thời gian và cảnh quan đứt gãy không gian đem lại ấn tượng mạnh về một môi trường mà người chơi có toàn quyền thao túng.
+    \item \textbf{Mục tiêu}: Trọng tâm của trò chơi là sinh tồn và rèn luyện kỹ năng qua từng màn chơi để tiếp cận lõi năng lượng của kẻ thù. Mục tiêu cuối cùng là kết hợp vật phẩm nhặt được để phá hủy nguồn năng lượng này và mở đường thoát thân.
+    \item \textbf{Diễn tiến và luồng trò chơi}: Trò chơi theo luồng tuyến tính rõ ràng. Từ màn hình chính, người chơi chọn bắt đầu Màn chơi 1 và trải qua hướng dẫn cơ bản \(\rightarrow\) Cấp độ huấn luyện kỹ năng \(\rightarrow\) Mở khóa súng cổng không gian tại nhà hát cũ \(\rightarrow\) Đi tìm nguyên liệu ở nhà xưởng hoang phế \(\rightarrow\) Đánh trận cuối cùng diệt lõi năng lượng \(\rightarrow\) Màn hình kết thúc.
+    \item \textbf{Nhiệm vụ, thử thách}: Thử thách đặt ra là phân bổ lượng thời gian sử dụng kỹ năng làm chậm thời gian hợp lý, đồng thời đánh giá địa hình nhanh chóng trên đường chạy để đặt cổng không gian sang vùng an toàn hòng né hỏa lực của tháp súng hay lính gác.
+\end{itemize}
+
+\section{Cơ chế của trò chơi}
+
+\subsection{Luật}
+Người chơi cần đi theo dòng tuyến tính do nhiệm vụ thiết lập sẵn. Sát thương nhận từ lính gác và tháp pháo sẽ làm giảm thanh sinh lực. Khi thanh sinh lực cạn kiệt, người chơi bị tính là thất bại và cần bắt đầu tải lại trò chơi từ điểm lưu gần nhất, hoặc bắt buộc chơi lại từ đầu màn chơi đó. Riêng tại Cấp độ 2 (huấn luyện kỹ năng), đây là ngoại lệ cho phép nhấn chuột trái để hồi sinh lập tức tại tọa độ lưu gần nhất do tính chất mô phỏng của màn chơi này.
+
+\subsection{Mô hình thế giới}
+\textbf{Vật lý và Ánh sáng}: Sử dụng hệ thống tương tác nội tại mạnh mẽ của Unreal Engine 5 (Bao gồm cơ chế trọng lực vật lý 3D, chiếu sáng tự động theo thời gian thực).
+\\
+\textbf{Kinh tế \& Vật phẩm}: Không sử dụng hệ thống tiền tệ trao đổi. Người chơi chủ yếu tương tác nhặt vật phẩm rơi vãi hoặc tìm trên đường đi (tài liệu, đồ đạc nguyên liệu), sử dụng cơ chế chế tạo để kết hợp chúng lại thành các vật phẩm chìa khóa làm công cụ qua màn hoặc đánh trùm.
+
+\subsection{Các hành động của nhân vật}
+\begin{itemize}
+    \item \textbf{Di chuyển \& Tương tác}: Các điều hướng không gian cơ bản như chạy bộ, nhảy, cúi người hoặc tương tác điều khiển xe ô tô trong cấp độ.
+    \item \textbf{Túi đồ}: Mở - đóng túi đồ trên màn hình để quản lý, trang bị và sử dụng trực tiếp các nguyên liệu đã nhặt được trên người.
+    \item \textbf{Làm chậm không gian}: Giảm cường độ thời gian của môi trường xung quanh, giúp kéo dãn khung thời gian diễn biến của trận đấu để người chơi có thêm thời gian thao tác, căn chỉnh ngắm bắn.
+    \item \textbf{Điều khiển cổng dịch chuyển}: Nhân vật chuyển trạng thái và bắn các luồng năng lượng lên tường nhà. Nếu hệ thống đánh giá địa hình đủ không gian và bề mặt chuẩn tương tác, một cánh cổng Xanh/Cam sẽ mở ra cho người chơi nhảy qua, luân chuyển tọa độ dịch chuyển xuyên không gian.
+\end{itemize}
+
+\subsection{Các tùy chọn trò chơi}
+Menu cài đặt của trò chơi cho phép người chơi điều chỉnh linh hoạt nhiều hạng mục, từ âm lượng tổng thể, mức độ đồ họa, tùy biến cài đặt phím linh hoạt đến việc sửa thông số độ nhạy chuột và máy quay.
+
+\subsection{Phản hồi cho người chơi}
+Hệ thống báo hiệu cho người chơi thông qua giao diện hiển thị trên màn hình (đỏ viền khi mất máu), hoặc các tâm ngắm báo hiệu tiêu diệt trúng đích. Khi mắc sai lầm lớn (như hết sinh lực và bị tiêu diệt), người chơi sẽ cần tải lại tại điểm lưu hoặc chơi lại màn chơi đó, tạo sức ép và yêu cầu sự thận trọng cùng việc lên phương án chiến thuật cẩn thận hơn cho lần thử kế tiếp.
+
+\section{Điều khiển}
+Cơ chế gán phím (có thể thay đổi) được mặc định tối ưu theo thiết lập của bàn phím chuột đối với thể loại hành động như sau:
+\begin{itemize}
+    \item \textbf{W, A, S, D}: Di chuyển đa hướng nhân vật.
+    \item \textbf{Space}: Nhảy.
+    \item \textbf{C}: Cúi người.
+    \item \textbf{E}: Tương tác với môi trường vật thể, hoặc dùng để lái xe.
+    \item \textbf{Q}: Mở/Đóng kho đồ cá nhân.
+    \item \textbf{Ctrl (Nhấn giữ/Bật)}: Radar rà soát toàn bản đồ nhằm phát hiện nhanh vị trí của lính gác.
+    \item \textbf{Chuột trái / Phải cơ bản}: Bắn súng cơ bản / Ngắm bắn.
+    \item \textbf{Phím X (Bật/tắt cổng dịch chuyển)}: Đưa người chơi vào dạng thao tác súng năng lượng. Ở chế độ này: 
+    \begin{itemize}
+        \item \textbf{Chuột trái}: Mở ra cổng Xanh trên bề mặt tường.
+        \item \textbf{Chuột right}: Mở ra cổng Cam trên bề mặt tương tự. Hai cổng tự động liên thông điểm vào - ra tương ứng cho người chơi bước qua.
+    \end{itemize}
+\end{itemize}
+
+\section{Cốt truyện}
+Yếu tố cốt truyện của Paradox Caliber khai thác các đặc tính của thuyết dòng thời gian vô tận. Nhân vật chính (người chơi) là một chiến binh tại một trong các dòng thời gian thuộc đa vũ trụ. Biến cố xảy ra khi những kẻ lạ mặt từ tương lai bằng cách nào đó đã dùng đứt gãy không - thời gian để trở lại can thiệp hòng đánh cắp và kiểm soát thực tại. Một sự thật lớn mở ra: Những lính gác mà nhân vật chiến đấu thực tế lại sử dụng chung một ngoại hình với anh ta (dùng chung một tài nguyên đồ họa). Bọn chúng chính là lực lượng nhân bản vô tính, hoặc một biến thể đến từ chiều thời gian đối địch khác do vị trùm cuối bí ẩn tạo ra nhằm truy bắt người chơi.
+
+Quá trình cốt truyện hiện đi từ những bước đào tạo sinh tồn, cho tới khi thu thập đủ khả năng mở cổng để xuyên phá vào sào huyệt tương lai của chúng ở màn cuối cùng. Cốt truyện của nguyên mẫu đồ án tạm ngưng ở cao trào khi người chơi đánh đổ được lõi năng lượng quan trọng nhất của binh đoàn xâm lăng, phá hỏng lá khiên và tẩu thoát nhằm tạo lợi thế nhất thời cho chiến tranh không gian; từ đây mở đường thiết kế cho những hậu bản sau này.
+
+\section{Nhân vật và kẻ địch}
+\begin{itemize}
+    \item \textbf{Nhân vật chính}: Là bản thể phiêu lưu thuộc đa vũ trụ bị lôi kéo vào cốt truyện, có khả năng điều khiển thông thạo mọi vũ khí, túi đồ, sử dụng thành thạo bộ trang bị mở khóa dịch chuyển không gian định hướng sẵn.
+    \item \textbf{Lính gác thời gian}: Kẻ thù trực tiếp, thường được trang bị súng và biết đi tuần tra. Dùng chung thiết kế mô hình với nhân vật chính để làm nổi bật ẩn ý các bản sao được lập trình. Có khả năng tự tìm chỗ nấp bằng thuật toán trí tuệ nhân tạo.
+    \item \textbf{Tháp súng phòng thủ tự động}: Cỗ máy kiểm soát những đoạn đường trọng yếu. Bắn áp đảo với hỏa lực cao và vô cùng chuẩn xác, buộc nhân vật chính đa số phải tàng hình né tránh, hoặc sử dụng cổng không gian vòng ra sau lưng hạ gục, hoặc đánh đổi một lượng máu nhất định để vô hiệu hoá.
+\end{itemize}
+
+
+\section{Màn chơi}
+Trò chơi được phân chia thành tiến trình 5 màn chơi tuyến tính với quy mô trải nghiệm, cơ chế và độ khó tăng dần. Ở mỗi màn chơi, người chơi sẽ được hướng dẫn cụ thể chỉ báo mục tiêu di chuyển qua hệ thống giao diện nhiệm vụ. Các bản đồ màn chơi được xây dựng thông qua việc tận dụng bộ tài nguyên môi trường, sau đó được cân chỉnh hệ thống ánh sáng, vật lý nội tại của Unreal Engine 5 để phù hợp với cốt truyện đứt gãy không gian. Việc phân chia chi tiết các màn chơi như sau:
+
+\subsection{Màn chơi 1: Cấp độ khởi động}
+\begin{itemize}
+    \item \textbf{Mục tiêu \& Diễn tiến:} Màn chơi nền tảng để người chơi làm quen với hệ thống điều khiển di chuyển cơ bản, giao diện người dùng và cơ chế dẫn dắt bằng nhiệm vụ.
+    \item \textbf{Cơ chế trọng tâm:} Hướng dẫn nhặt vật phẩm, mở túi đồ cá nhân, trang bị súng và tập bắn. Đồng thời giới thiệu cơ chế làm chậm thời gian toàn cục giúp giảm chậm nhịp điệu diễn biến không gian xung quanh để người chơi có thêm khung thời gian phản ứng và căn chỉnh tâm ngắm cho chính xác - đây là công cụ cốt yếu để vượt qua các tình huống khó.
+    \item \textbf{Thử thách:} Nhiệm vụ kết thúc khi người chơi tiếp cận và tiêu diệt thành công 2 mục tiêu cơ bản và đi tới điểm thoát ly.
+\end{itemize}
+
+\subsection{Màn chơi 2: Mô phỏng thực tế ảo}
+\begin{itemize}
+    \item \textbf{Bối cảnh \& Đồ họa:} Nằm trong chương trình giả lập thế giới ảo của hệ thống, đồ họa của màn chơi này được thiết kế tối giản có chủ đích.
+    \item \textbf{Mục tiêu \& Diễn tiến:} Cung cấp một môi trường tương tác toàn diện để nhân vật thử sức với tất cả các loại vũ khí và chức năng hoàn chỉnh của game.
+    \item \textbf{Cơ chế trọng tâm:} Làm quen với cơ chế cổng không gian một chiều để di chuyển theo sắp xếp của màn chơi xen kẽ trong bản đồ, nâng cấp giới hạn sức chứa vũ khí và học cách chế tạo đồ dùng từ các vật phẩm đặt trong bản đồ. Giới thiệu các loại kẻ địch cơ bản như tháp pháo và lính gác.
+    \item \textbf{Đặc trưng hồi sinh:} Đây là cấp độ duy nhất khi nhân vật chính cạn máu có thể lập tức nhấn chuột trái để hồi sinh tại một tọa độ gần nhất thay vì phải chơi lại màn từ đầu.
+\end{itemize}
+
+\subsection{Màn chơi 3: Nhà hát}
+\begin{itemize}
+    \item \textbf{Bối cảnh \& Đồ họa:} Một kiệt tác nhà hát cổ bị dịch chuyển bởi hỗn loạn đứt gãy từ không - thời gian vào giữa một khu rừng sâu, tạo không gian nghệ thuật pha lẫn giả tưởng.
+    \item \textbf{Mục tiêu \& Diễn tiến:} Mở khóa sức mạnh quan trọng nhất của nhân vật -- khả năng tạo cổng không gian chủ động. 
+    \item \textbf{Cơ chế trọng tâm:} Thay vì dùng cổng cho sẵn, người chơi được hướng dẫn cách chuyển trạng thái mở cổng để tự thiết lập. Bằng cách bắn các quả cầu năng lượng lên các mặt phẳng hợp lệ, tạo ra cổng xanh (Chuột trái) và cổng cam (Chuột phải) thông với nhau. Nhờ vậy có thể nhìn rọi các khu vực và bước xuyên qua để thực hiện di chuyển tức thời qua lại 2 chiều ở 2 vị trí này.
+\end{itemize}
+
+\subsection{Màn chơi 4: Nhà xưởng hoang phế}
+\begin{itemize}
+    \item \textbf{Bối cảnh \& Đồ họa:} Khu di tích nhà xưởng công nghiệp bị bỏ hoang, phức tạp về mặt điều hướng.
+    \item \textbf{Mục tiêu \& Diễn tiến:} Người chơi áp dụng tổng hợp cả phản xạ lẫn kỹ năng dịch chuyển không gian để vượt qua màn này. Nhiệm vụ chính là tìm kiếm vật phẩm nguyên liệu đặc thù để chế tạo vật phẩm quan trọng cho cốt truyện.
+    \item \textbf{Cơ chế trọng tâm:} Tiến hành nhặt các tài liệu, rèn đúc kết hợp nhằm tạo ra vật phẩm chìa khóa dùng cho trận đấu diệt mục tiêu quan trọng nhất ở màn cuối.
+\end{itemize}
+
+\subsection{Màn chơi 5: Lõi năng lượng}
+\begin{itemize}
+    \item \textbf{Mục tiêu \& Diễn tiến:} Cuộc chiến sống còn bao vây xung quanh một cỗ máy duy trì nguồn sống cho quân địch xuyên thời gian. Mục đích cuối cùng là phá hủy hoàn toàn lõi năng lượng.
+    \item \textbf{Cuộc chiến cuối cùng:} Lõi năng lượng được che chắn bởi một lớp khiên miễn nhiễm sát thương và được duy trì bởi bất kỳ lính gác nào xung quanh. Người chơi cần bắn hạ toàn bộ các lính gác để xóa giáp lõi. Tiến hành cài vật phẩm chìa khóa đã kết hợp từ màn trước và chạy đua đến các vùng thoát ly trước vụ nổ hủy diệt. Đỉnh điểm này kết thúc cốt truyện của nguyên mẫu đồ án, mở ra tiền đề phát triển các cấp độ tiếp theo.
+\end{itemize}
+
+\section{Giao diện người dùng}
+Hệ thống giao diện hiển thị trên màn hình đóng vai trò then chốt trong việc truyền tải thông tin tức thời mà không làm gián đoạn nhịp độ hành động. Giao diện được thiết kế theo hướng tối giản, bảo đảm không cản trở góc nhìn thứ ba của không gian 3D.
+
+Các thành phần chính trên màn hình bao gồm (xem Hình \ref{fig:hud_overview} và Hình \ref{fig:hud_control_guide}):
+\begin{itemize}
+    \item \textbf{Thanh sinh lực}: Đặt ở chính giữa cạnh dưới màn hình để dễ dàng quan sát.
+    \item \textbf{Thông tin trang bị}: Hiển thị ở góc dưới bên phải, cho biết vũ khí hoặc vật phẩm hiện tại đang sử dụng.
+    \item \textbf{Danh sách nhiệm vụ}: Hiển thị ở góc trên bên phải, cập nhật và dẫn dắt người chơi đi đúng tiến trình của màn chơi.
+    \item \textbf{Bảng hướng dẫn phím}: Nằm cố định ở góc trái (có thể bật/tắt bằng phím số 1). Bảng này giúp người chơi mới dễ dàng tra cứu nhanh các phím tắt quan trọng như: sử dụng kỹ năng làm chậm thời gian (Chuột giữa), mở cổng không gian (X), tương tác (E), v.v.
+    \item \textbf{Tâm ngắm và phản hồi sát thương}: Đặt ở trung tâm phục vụ cơ chế nhắm bắn chuẩn xác và báo hiệu khi nhận sát thương.
+\end{itemize}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Hinhve/HUD_1.png}
+    \caption{Tổng quan hệ thống giao diện hiển thị trên màn hình}
+    \label{fig:hud_overview}
+\end{figure}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Hinhve/HUD_2.png}
+    \caption{Chi tiết bảng hướng dẫn thao tác phím}
+    \label{fig:hud_control_guide}
+\end{figure}
+
+Nhờ các khía cạnh về cơ chế điều khiển, phản hồi cảm giác người chơi, nghệ thuật đồ họa và âm thanh đã được tích hợp mô tả trong các mục trước đó, phần này đã được tinh gọn lại và tập trung thuần túy vào hệ thống hiển thị.
+
+Chi tiết về kỹ thuật thiết kế, lập trình luồng sự kiện giao diện trong Unreal Engine 5, cũng như để xử lý các hệ thống menu phức tạp hơn (Túi đồ, Cài đặt, Tạm dừng) sẽ được trình bày chuyên sâu tại \textbf{Chương 6: Giải pháp và đóng góp}.
+
+\end{document}

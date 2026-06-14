@@ -1,0 +1,53 @@
+\documentclass[../DoAn.tex]{subfiles}
+\begin{document}
+
+\section{Đặt vấn đề}
+\label{section:1.1}
+
+Ngành công nghiệp trò chơi điện tử trên toàn cầu đang trải qua giai đoạn tăng trưởng liên tục. Theo báo cáo thường niên của Newzoo \cite{Newzoo2024}, doanh thu thị trường game thế giới năm 2024 đạt khoảng 187,7 tỷ USD và dự kiến tiếp tục tăng trong các năm tới. Trong đó, phân khúc game trên nền tảng PC chiếm tỷ trọng đáng kể với khoảng 37,4 tỷ USD \cite{Newzoo2024}, phản ánh nhu cầu lớn của người dùng đối với các sản phẩm giải trí tương tác chất lượng cao. Trước đó, vào năm 2020, ngành game toàn cầu đã đạt mức doanh thu kỷ lục 179 tỷ USD, tăng 20\% so với năm 2019, cho thấy sức bền và khả năng tăng trưởng vượt trội so với nhiều ngành giải trí khác \cite{Witkowski2020}.
+
+Trong số các thể loại trò chơi phổ biến, thể loại bắn súng hành động (Action Shooter) luôn duy trì vị trí hàng đầu về lượng người chơi và doanh thu. Các tựa game tiêu biểu như Control (Metascore 85/100 \cite{MetacriticControl}), Hitman: World of Assassination (Metascore 87/100 \cite{MetacriticHitman3}), và Max Payne (Metascore 89/100 \cite{MetacriticMaxPayne}) đã chứng minh sức hấp dẫn bền vững của thể loại bắn súng góc nhìn thứ ba (Third-Person Shooter -- TPS) qua nhiều thế hệ người chơi. Đặc biệt, những tựa game tích hợp các cơ chế sáng tạo như làm chậm thời gian (Bullet Time) trong Max Payne, hay sử dụng năng lực siêu nhiên để thao túng vật thể và không gian trong Control, đã nhận được phản hồi tích cực từ cộng đồng lẫn giới phê bình. Chúng mang lại trải nghiệm chiến thuật phong phú hơn hẳn so với các trò chơi bắn súng truyền thống. Tuy nhiên, trên thị trường hiện tại, số lượng sản phẩm kết hợp đồng thời các cơ chế: bắn súng ẩn nấp, dịch chuyển không gian và thao túng thời gian trong cùng một trò chơi TPS vẫn còn rất hạn chế.
+
+Song song với nhu cầu của người chơi, sự phát triển nhanh chóng của thị trường game tại khu vực Đông Nam Á và Việt Nam cũng mở ra triển vọng cho các nhà phát triển nội địa. Theo báo cáo của Niko Partners \cite{NikoPartners2024}, thị trường game Đông Nam Á năm 2024 có khoảng 270 triệu người chơi, trong đó Việt Nam đứng trong nhóm dẫn đầu về nền tảng PC. Mặc dù phần lớn sản phẩm game phổ biến tại Việt Nam đến từ các studio nước ngoài, năng lực phát triển game nội địa đang dần được khẳng định. Việc một sinh viên hoặc nhà phát triển độc lập (Indie) trong nước có thể tự thiết kế một sản phẩm game 3D hoàn chỉnh sẽ góp phần minh chứng cho tiềm năng của nguồn nhân lực công nghệ Việt Nam.
+
+Bên cạnh đó, sự phát triển của các công cụ làm game thế hệ mới đang xóa bỏ nhiều rào cản kỹ thuật. Unreal Engine 5 \cite{UE56Doc} với các công nghệ đồ họa tiên tiến như Nanite (Virtualized Geometry) và Lumen (Global Illumination) cho phép xây dựng môi trường 3D chất lượng AAA mà không yêu cầu đội ngũ quy mô lớn. Đồng thời, hệ sinh thái tài nguyên mở từ các nền tảng như Fab \cite{EpicFab} cung cấp hàng nghìn mô hình 3D, vật liệu và hoạt ảnh miễn phí, giúp giảm thiểu chi phí sản xuất. Điều này đặt ra một bài toán thực tiễn: Liệu một cá nhân có thể tận dụng các công cụ hiện đại này để phát triển một trò chơi hành động có độ phức tạp cao với ngân sách tối thiểu, mà vẫn đảm bảo chất lượng trải nghiệm hay không?
+
+Từ góc độ học thuật, việc xây dựng một trò chơi điện tử hoàn chỉnh đòi hỏi việc vận dụng tổng hợp nhiều lĩnh vực kiến thức: từ lập trình hệ thống, kiến trúc phần mềm, xử lý toán học không gian 3D, đến thiết kế trải nghiệm người dùng (UX) và Trí tuệ nhân tạo (AI). Đây là một bài toán có giá trị thực tiễn cao, phù hợp với mục tiêu đào tạo của chuyên ngành, đồng thời cung cấp kinh nghiệm thực chiến với một Game Engine hàng đầu trong ngành công nghiệp.
+
+\section{Mục tiêu và phạm vi đề tài}
+\label{section:1.2}
+
+Trên thị trường hiện tại, các sản phẩm phổ biến thường phân hóa theo hai hướng tiếp cận cơ chế. Hướng thứ nhất là các tựa game bắn súng ẩn nấp (Cover Shooter) như \textit{Gears of War} (Metascore 94/100 \cite{MetacriticGearsOfWar}) hay \textit{The Division} \cite{MetacriticTheDivision}, nơi người chơi dựa vào vật cản để sinh tồn. Hướng thứ hai là các tựa game khai thác sự bất thường của không - thời gian, ví dụ như \textit{Max Payne} (thao túng thời gian) hay \textit{Portal} \cite{MetacriticPortal} và \textit{Splitgate} (Metascore 71/100 \cite{MetacriticSplitgate} - thao túng cổng không gian). Việc chỉ khai thác một cơ chế đơn lẻ đôi khi khiến trải nghiệm chiến thuật bị giới hạn trong một khuôn khổ nhất định.
+
+Theo báo cáo \textit{Essential Facts} của Entertainment Software Association (ESA) năm 2024 \cite{ESA2024}, khoảng 65\% người chơi ưu tiên lựa chọn các tựa game có cơ chế chơi sáng tạo, đột phá. Điều này cho thấy tiềm năng lớn của một sản phẩm có khả năng tích hợp đa cơ chế.
+
+Từ thực trạng trên, Đồ án này đặt ra mục tiêu phát triển trò chơi \textbf{Paradox Caliber} -- một tựa game TPS kết hợp ba cơ chế cốt lõi: (i) Bắn súng ẩn nấp; (ii) Cổng không gian (Portal) để dịch chuyển tức thời, tạo lợi thế chiến thuật; và (iii) Làm chậm thời gian để phản xạ trong các tình huống hiểm nghèo. Trò chơi được thiết kế với 05 màn chơi (Levels) tuyến tính có độ khó tăng dần, tích hợp hệ thống trí tuệ nhân tạo điều khiển kẻ thù có khả năng tự điều hướng và phối hợp chiến đấu.
+
+Về mặt sản xuất, Đồ án tận dụng tối đa các tài nguyên 3D miễn phí từ nền tảng Fab, kết hợp với các thuật toán tinh chỉnh trong Unreal Engine 5.6 nhằm tối ưu hóa chi phí sản xuất mà vẫn duy trì chất lượng đồ họa vượt trội. Sản phẩm định vị là một trò chơi ngoại tuyến một người chơi (Single-player PC Game), hướng tới tập người chơi từ 16 đến 30 tuổi yêu thích thể loại khoa học viễn tưởng và hành động chiến thuật.
+
+\section{Định hướng giải pháp}
+\label{section:1.3}
+
+Về thể loại, Paradox Caliber thuộc dòng bắn súng góc nhìn thứ ba kết hợp cơ chế ẩn nấp. Đây là nền tảng cơ chế vững chắc, đã được thị trường kiểm chứng, tạo tiền đề tốt để tích hợp các cơ chế mở rộng.
+
+Về công nghệ, Đồ án sử dụng \textbf{Unreal Engine 5.6} \cite{UE56Doc} làm nền tảng phát triển chính dựa trên các ưu điểm: (i) Hệ thống chiếu sáng động Lumen hỗ trợ tốt cho môi trường thay đổi liên tục qua cổng không gian; (ii) Hệ thống cây hành vi (Behavior Tree) tích hợp sẵn; và (iii) Hệ sinh thái lập trình trực quan Blueprint mạnh mẽ.
+
+Giải pháp kỹ thuật cụ thể bao gồm việc tái cấu trúc các cơ chế hệ thống: xây dựng thuật toán bắn súng qua góc nhìn thứ ba; xử lý toán học không gian (Vector và Rotator) cho hệ thống cổng không gian; và áp dụng thuật toán giãn nở thời gian (Time Dilation) để mô phỏng cơ chế làm chậm thời gian.
+
+\section{Bố cục đồ án}
+\label{section:1.4}
+Phần còn lại của báo cáo Đồ án tốt nghiệp được tổ chức như sau:
+
+\textbf{Chương 2:} Trình bày quá trình khảo sát hiện trạng, phân tích các sản phẩm tương tự trên thị trường và xác định mục đích, định hướng sử dụng của trò chơi.
+
+\textbf{Chương 3:} Phân tích các nền tảng công nghệ cơ sở (Unreal Engine 5.6, Behavior Tree, Lumen) và công cụ kiểm soát phiên bản (Perforce) được lựa chọn để giải quyết bài toán kỹ thuật.
+
+\textbf{Chương 4:} Cung cấp tài liệu thiết kế trò chơi (Game Design Document) chi tiết, bao gồm: tổng quan lối chơi, cơ chế cốt lõi, cốt truyện, thiết kế màn chơi và giao diện người dùng (UI/HUD).
+
+\textbf{Chương 5:} Trình bày môi trường cấu hình, yêu cầu hệ thống phát triển, quá trình đóng gói triển khai sản phẩm và tổng hợp các kết quả hình ảnh đạt được của dự án.
+
+\textbf{Chương 6:} Đi sâu vào chi tiết các giải pháp kỹ thuật, phân tích mã nguồn Blueprint và các đóng góp cốt lõi trong việc tùy biến hệ thống cổng không gian, tối ưu hóa AI và quản lý tiến trình nhiệm vụ.
+
+\textbf{Chương 7:} Tổng kết Đồ án, đánh giá các mặt hạn chế và đề xuất hướng phát triển mở rộng trong tương lai.
+
+\end{document}

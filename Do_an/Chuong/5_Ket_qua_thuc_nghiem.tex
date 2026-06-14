@@ -1,0 +1,92 @@
+\documentclass[../DoAn.tex]{subfiles}
+\begin{document}
+
+\section{Môi trường và công cụ phát triển}
+Để xây dựng và phát triển "Paradox Caliber", dự án ưu tiên ứng dụng quy trình lập trình trực quan Blueprint của Unreal Engine 5.6, kết hợp với các bộ tài nguyên có sẵn trên cửa hàng nền tảng nhằm tập trung tối đa thời gian vào việc hoàn thiện thiết kế màn chơi và logic cốt lõi (xem Bảng \ref{table:tools_used}).
+
+\begin{table}[!htbp]
+\centering{}
+    \begin{tabular}{|l|l|p{6cm}|}
+        \hline
+        \textbf{Phân loại} & \textbf{Công cụ/Tài nguyên} & \textbf{Mục đích sử dụng} \\ \hline
+        Nền tảng phát triển & Unreal Engine 5.6 & Xây dựng logic trò chơi (hoàn toàn bằng lập trình trực quan, bao gồm cả cơ chế mở cổng không gian), cấu hình vật lý, hệ thống ánh sáng và kiến trúc màn chơi.\\ \hline
+        Tài nguyên 3D & Fab (Quixel / Unreal Marketplace) & Lựa chọn và sử dụng các bộ tài nguyên môi trường, nhân vật, vũ khí.  \\ \hline
+        \end{tabular}
+    \caption{Danh sách công cụ và tài nguyên phát triển}
+    \label{table:tools_used}
+\end{table}
+
+\section{Yêu cầu hệ thống}
+\subsection{Cấu hình máy trạm phát triển}
+Để tối ưu hóa hiệu suất làm việc, đảm bảo khả năng xử lý mượt mà trên Unreal Engine 5.6 với lượng lớn tài nguyên hình ảnh và hệ thống ánh sáng thời gian thực, dự án được xây dựng và biên dịch trên hệ thống máy trạm có cấu hình như sau:
+\begin{itemize}
+    \item \textbf{Hệ điều hành:} Microsoft Windows 11 Home Single Language (64-bit).
+    \item \textbf{Vi xử lý:} AMD Ryzen 9 7945HX (Xung nhịp 2.5 GHz, 16 Cores, 32 Threads) tích hợp card đồ họa Radeon Graphics.
+    \item \textbf{Bộ nhớ trong:} 32.0 GB.
+    \item \textbf{Dung lượng lưu trữ:} Toàn bộ mã nguồn dự án, các tệp lập trình và tài nguyên chiếm khoảng \textbf{43.6 GB} dung lượng vật lý. Quá trình phát triển yêu cầu ổ cứng tốc độ cao nhằm tăng tốc khởi chạy dự án và xử lý biên dịch bộ đổ bóng.
+\end{itemize}
+
+\subsection{Cấu hình trải nghiệm trò chơi khuyến nghị}
+Đối với người dùng cuối, mặc dù "Paradox Caliber" sử dụng hệ thống chiếu sáng toàn cục thời gian thực và cơ chế cổng không gian tiêu tốn hiệu năng (yêu cầu phần cứng phải kết xuất liên tục nhiều luồng máy quay cùng lúc), các yêu cầu phần cứng đã được tối ưu hóa ở mức độ hợp lý:
+\begin{itemize}
+    \item Hệ điều hành: Windows 10/11 64-bit.
+    \item Vi xử lý: Intel Core i5 thế hệ thứ 10 hoặc AMD Ryzen 5 tương đương trở lên.
+    \item Bộ nhớ: 16 GB.
+    \item Card đồ họa: NVIDIA RTX 2060 hoặc AMD Radeon RX 6600 (Khuyến nghị các thiết bị card rời có hỗ trợ dò tia phần cứng).
+    \item Dung lượng ổ cứng: Tối thiểu trống 45 GB.
+\end{itemize}
+
+\section{Triển khai và Cài đặt trò chơi}
+\subsection{Cách thức đóng gói và tiếp cận cho người chơi}
+Sản phẩm trò chơi được biên dịch và đóng gói từ nền tảng Unreal Engine, xuất ra dưới định dạng tệp thực thi độc lập chuẩn của hệ điều hành Windows (\texttt{.exe}).
+\begin{itemize}
+    \item \textbf{Cài đặt:} Người chơi nhận được một tệp tin nén chứa toàn bộ dữ liệu cấu thành game. Tiến trình này không yêu cầu cài đặt thêm bất kỳ tiện ích bên thứ ba nào, ngoại trừ các thư viện nền của hệ điều hành.
+    \item \textbf{Khởi chạy:} Sau khi giải nén, người chơi chỉ cần truy cập vào thư mục chứa dự án và khởi chạy tệp thực thi \texttt{ParadoxCaliber.exe} để truy cập trực tiếp vào màn hình chính.
+    \item \textbf{Cấu hình:} Trước khi bắt đầu chiến dịch, hệ thống cung cấp Menu Cài đặt cho phép người chơi tùy chỉnh linh hoạt các thông số về Đồ họa, Âm thanh, và Độ nhạy của chuột/ống kính ngắm.
+\end{itemize}
+
+\subsection{Định hướng chia sẻ mã nguồn phát triển}
+Đối với các đơn vị, cá nhân mong muốn tiếp nhận mã nguồn nhằm nghiên cứu cấu trúc hệ thống hoặc tiếp tục phát triển nội dung trò chơi:
+\begin{itemize}
+    \item \textbf{Thiết lập môi trường:} Yêu cầu cài đặt trình quản lý Epic Games Launcher và tải về phiên bản Unreal Engine 5.6 tương ứng.
+    \item \textbf{Chuyển giao dữ liệu:} Chuẩn bị không gian lưu trữ và tải về toàn bộ cấu trúc thư mục gốc (khoảng 43.6 GB).
+    \item \textbf{Khởi chạy mã nguồn:} Nhờ ưu điểm của kiến trúc lập trình trực quan, các nhà phát triển không cần mất thời gian cấu hình môi trường và biên dịch lại thư viện như đối với ngôn ngữ C++. Người dùng chỉ cần khởi chạy tệp \texttt{Project3.uproject} để nhận toàn quyền hiệu chỉnh tài nguyên trong môi trường phát triển.
+\end{itemize}
+
+\section{Khả năng mở rộng dự án}
+Do kiến trúc nền tảng vật lý và hệ thống logic cốt lõi đã được đóng gói thành các đối tượng và thành phần chức năng độc lập, quy trình mở rộng vòng đời của trò chơi (phát triển thêm màn chơi mới) được tinh giản đáng kể.
+
+Để khởi tạo một cấp độ màn chơi mới mà không phát sinh yêu cầu về cơ chế mới, quy trình thao tác bao gồm các bước:
+\begin{enumerate}
+    \item Truy cập các kho tài nguyên nền tảng, tìm kiếm và tích hợp một bộ tài nguyên môi trường tĩnh phù hợp với bối cảnh cốt truyện.
+    \item Khởi tạo và thiết lập lưới điều hướng cùng các bề mặt vật lý để đảm bảo thuật toán sinh cổng nhận diện được không gian tương tác hợp lệ.
+    \item Khởi tạo đối tượng quản lý nhiệm vụ và thiết lập cấu trúc trạng thái cho khớp với kịch bản mới (Chi tiết về luồng thực thi hệ thống nhiệm vụ được phân tích chuyên sâu tại \textbf{Chương 6: Giải pháp và Đóng góp}).
+    \item Bố trí các đối tượng vào bản đồ, bao gồm: Vị trí bắt đầu của nhân vật chính, hệ thống sinh kẻ địch, tháp súng, các điểm lưu trò chơi và vật phẩm tương tác để hoàn thiện màn chơi.
+\end{enumerate}
+
+\section{Kết quả đạt được}
+Dự án đã phát triển thành công một nguyên mẫu trò chơi hoàn chỉnh, tuân thủ nghiêm ngặt mô hình thiết kế đã phác thảo. Các kết quả kỹ thuật nổi bật bao gồm:
+\begin{itemize}
+    \item Hiện thực hóa mượt mà cơ chế súng mở không gian, đảm bảo xử lý chính xác logic luân chuyển tọa độ và bảo toàn động lượng vật lý, toàn bộ được đóng gói trên kiến trúc đồ thị trực quan.
+    \item Thiết kế và điều phối tuyến tính trơn tru 05 bản đồ màn chơi với quy mô và độ khó tăng dần, kết hợp hài hòa giữa cấu trúc địa hình và các thử thách giải đố không gian.
+    \item Triển khai thành công trí tuệ nhân tạo bằng cây hành vi, cung cấp cho hệ thống kẻ địch các tập tính chiến thuật đa dạng như: tuần tra, tìm chỗ ẩn nấp và tương tác bắn trả linh hoạt.
+\end{itemize}
+
+\section{Hình ảnh sản phẩm}
+Dưới đây là một số hình ảnh thực tế trích xuất trực tiếp từ quá trình trải nghiệm trò chơi, thể hiện kết quả đạt được về mặt giao diện người dùng và chất lượng kết xuất đồ họa tổng thể (xem Hình \ref{fig:scr_1} và Hình \ref{fig:scr_2}).
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Hinhve/5.1.png}
+    \caption{Giao diện tổng quan trong màn hình trò chơi, hiển thị góc nhìn thứ ba và các thành phần giao diện cơ bản.}
+    \label{fig:scr_1}
+\end{figure}
+
+ \begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Hinhve/5.2.png}
+    \caption{Nhân vật thiết lập thành công cổng không gian liên thông giữa hai không gian, thể hiện hiệu ứng kết xuất hình ảnh chính xác về mặt quang học và vật lý.}
+    \label{fig:scr_2}
+\end{figure}
+
+\end{document}

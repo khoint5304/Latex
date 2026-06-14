@@ -1,0 +1,82 @@
+\ttl@change@i {\@ne }{chapter}{0.0cm}{\bfseries \vspace {0.3cm}}{{\bfseries {\scshape } CHƯƠNG \thecontentslabel .\ }}{}{\titlerule *[0.3pc]{.}\contentspage }\relax 
+\ttl@change@v {chapter}{}{}{}\relax 
+\ttl@change@i {\@ne }{section}{0.0cm}{\vspace {0.3cm}}{\thecontentslabel \ }{}{\titlerule *[0.3pc]{.}\contentspage }\relax 
+\ttl@change@v {section}{}{}{}\relax 
+\ttl@change@i {\@ne }{subsection}{1.0cm}{\vspace {0.3cm}}{\thecontentslabel \ }{}{\titlerule *[0.3pc]{.}\contentspage }\relax 
+\ttl@change@v {subsection}{}{}{}\relax 
+\thispagestyle {empty}
+\contentsline {chapter}{\numberline {1}GIỚI THIỆU ĐỀ TÀI}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Đặt vấn đề}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Mục tiêu đề tài}{2}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Phạm vi và đối tượng người chơi}{3}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Định hướng giải pháp}{4}{section.1.4}%
+\contentsline {section}{\numberline {1.5}Bố cục đồ án}{5}{section.1.5}%
+\contentsline {chapter}{\numberline {2}KHẢO SÁT VÀ PHÂN TÍCH YÊU CẦU}{7}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Khảo sát hiện trạng và đánh giá tương tự}{7}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Mục đích của trò chơi}{7}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Định hướng sử dụng}{8}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Cơ sở của định hướng sử dụng}{8}{section.2.4}%
+\contentsline {chapter}{\numberline {3}CÔNG NGHỆ SỬ DỤNG}{9}{chapter.3}%
+\contentsline {chapter}{\numberline {4}Công nghệ sử dụng}{10}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Nền tảng phát triển Unreal Engine 5.6}{10}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Chiếu sáng toàn cầu động với Lumen (Lumen Global Illumination)}{10}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Trí tuệ nhân tạo qua Hệ thống Behavior Tree}{11}{subsection.4.1.2}%
+\contentsline {section}{\numberline {4.2}Hệ thống kiểm soát phiên bản Perforce Helix Core (P4V)}{11}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Các nền tảng thay thế}{11}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}Lý do sử dụng Perforce (P4V)}{11}{subsection.4.2.2}%
+\contentsline {chapter}{\numberline {5}THIẾT KẾ TRÒ CHƠI}{13}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Tổng quan trò chơi}{13}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Lối chơi}{13}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Cơ chế của trò chơi}{14}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Luật}{14}{subsection.5.3.1}%
+\contentsline {subsection}{\numberline {5.3.2}Mô hình thế giới}{14}{subsection.5.3.2}%
+\contentsline {subsection}{\numberline {5.3.3}Các hành động của nhân vật}{14}{subsection.5.3.3}%
+\contentsline {subsection}{\numberline {5.3.4}Các tùy chọn trò chơi}{14}{subsection.5.3.4}%
+\contentsline {subsection}{\numberline {5.3.5}Phản hồi cho người chơi}{15}{subsection.5.3.5}%
+\contentsline {section}{\numberline {5.4}Điều khiển}{15}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Cốt truyện}{15}{section.5.5}%
+\contentsline {section}{\numberline {5.6}Nhân vật và kẻ địch}{16}{section.5.6}%
+\contentsline {section}{\numberline {5.7}Màn chơi}{16}{section.5.7}%
+\contentsline {subsection}{\numberline {5.7.1}Màn chơi 1: Cấp độ Khởi động (Tutorial)}{16}{subsection.5.7.1}%
+\contentsline {subsection}{\numberline {5.7.2}Màn chơi 2: Mô phỏng Thực tế ảo (VR Training)}{17}{subsection.5.7.2}%
+\contentsline {subsection}{\numberline {5.7.3}Màn chơi 3: Nhà hát (The Opera)}{17}{subsection.5.7.3}%
+\contentsline {subsection}{\numberline {5.7.4}Màn chơi 4: Nhà xưởng hoang phế (The Abandoned Factory)}{17}{subsection.5.7.4}%
+\contentsline {subsection}{\numberline {5.7.5}Màn chơi 5: Lõi Năng Lượng (Energy Core)}{18}{subsection.5.7.5}%
+\contentsline {section}{\numberline {5.8}UI}{18}{section.5.8}%
+\contentsline {chapter}{\numberline {6}THỰC NGHIỆM VÀ ĐÁNH GIÁ}{20}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Tổng quan kỹ thuật}{20}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Thiết kế kiến trúc}{20}{section.6.2}%
+\contentsline {subsection}{\numberline {6.2.1}Lựa chọn kiến trúc phần mềm}{20}{subsection.6.2.1}%
+\contentsline {subsection}{\numberline {6.2.2}Thiết kế tổng quan}{20}{subsection.6.2.2}%
+\contentsline {subsection}{\numberline {6.2.3}Thiết kế chi tiết gói}{21}{subsection.6.2.3}%
+\contentsline {section}{\numberline {6.3}Thiết kế chi tiết}{22}{section.6.3}%
+\contentsline {subsection}{\numberline {6.3.1}Thiết kế lớp}{22}{subsection.6.3.1}%
+\contentsline {subsection}{\numberline {6.3.2}Thiết kế cơ sở dữ liệu}{22}{subsection.6.3.2}%
+\contentsline {section}{\numberline {6.4}Xây dựng ứng dụng}{22}{section.6.4}%
+\contentsline {subsection}{\numberline {6.4.1}Thư viện và công cụ sử dụng}{22}{subsection.6.4.1}%
+\contentsline {subsection}{\numberline {6.4.2}Kết quả đạt được}{23}{subsection.6.4.2}%
+\contentsline {section}{\numberline {6.5}Sản phẩm}{23}{section.6.5}%
+\contentsline {section}{\numberline {6.6}Kiểm thử}{23}{section.6.6}%
+\contentsline {section}{\numberline {6.7}Triển khai}{24}{section.6.7}%
+\contentsline {chapter}{\numberline {7}CÁC GIẢI PHÁP VÀ ĐÓNG GÓP NỔI BẬT}{25}{chapter.7}%
+\contentsline {chapter}{\numberline {8}KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN}{26}{chapter.8}%
+\contentsline {section}{\numberline {8.1}Kết luận}{26}{section.8.1}%
+\contentsline {section}{\numberline {8.2}Hướng phát triển}{26}{section.8.2}%
+\contentsline {chapter}{TÀI LIỆU THAM KHẢO}{29}{section*.10}%
+\contentsline {chapter}{PHỤ LỤC}{30}{section*.11}%
+\ttl@change@i {\@ne }{chapter}{0.0cm}{\bfseries \vspace {0.3cm}}{{\bfseries {\scshape } \thecontentslabel .\ }}{}{\titlerule *[0.3pc]{.}\contentspage }\relax 
+\ttl@change@v {chapter}{}{}{}\relax 
+\contentsline {chapter}{\numberline {A}HƯỚNG DẪN VIẾT ĐỒ ÁN TỐT NGHIỆP}{30}{appendix.1.A}%
+\contentsline {section}{\numberline {A.1}Ngành học}{31}{section.1.A.1}%
+\contentsline {section}{\numberline {A.2}Đánh dấu (bullet) và đánh số (numering)}{31}{section.1.A.2}%
+\contentsline {section}{\numberline {A.3}Cách thêm bảng}{32}{section.1.A.3}%
+\contentsline {section}{\numberline {A.4}Chèn hình ảnh}{32}{section.1.A.4}%
+\contentsline {section}{\numberline {A.5}Tài liệu tham khảo}{32}{section.1.A.5}%
+\contentsline {paragraph}{Cách liệt kê}{32}{paragraph*.14}%
+\contentsline {paragraph}{Các loại tài liệu tham khảo}{33}{paragraph*.15}%
+\contentsline {section}{\numberline {A.6}Cách viết phương trình và công thức toán học}{33}{section.1.A.6}%
+\contentsline {section}{\numberline {A.7}Qui cách đóng quyển}{33}{section.1.A.7}%
+\contentsline {chapter}{\numberline {B}ĐẶC TẢ USE CASE}{35}{appendix.1.B}%
+\contentsline {section}{\numberline {B.1}Đặc tả use case ``Thống kê tình hình mượn sách''}{35}{section.1.B.1}%
+\contentsline {section}{\numberline {B.2}Máy trạng thái của nhân vật "Thỏ"}{35}{section.1.B.2}%
+\contentsfinish 

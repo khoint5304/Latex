@@ -1,0 +1,5 @@
+[0] Config.pm:328> INFO - This is Biber 2.21
+[0] Config.pm:331> INFO - Logfile is 'D:\Sach_PDF\Do_an\Latex\Do_an\Chuong\PDF\3_Cong_nghe.blg'
+[146] biber-MSWIN64:342> INFO - === 
+[1114] Utils.pm:479> ERROR - Cannot find '3_Cong_nghe.bcf'!
+[1114] Biber.pm:137> INFO - ERRORS: 1
